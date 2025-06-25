@@ -19,14 +19,14 @@ import { GqlAuthGuard } from '../../../common/authentication/guards/gql-auth.gua
 import { TokenUser } from '../../../common/authentication/decorators/tokenUser.decorator';
 import { ACRoles } from '../../../common/access-controll/decorators/ac-roles.decorator';
 import { UpsertDeviceDto } from '../dtos/upsert-device.dto';
-import { UpdateIbapUserPasswordDto } from '../dtos/update-ibapUser-password.dto';
+import { UpdateUserPasswordDto } from '../dtos/update-User-password.dto';
 import { AuthUserType } from '../../auth/types/authuser.type';
 import { AppUserType } from '../types/appUser.type';
 import { CreateAppUserDto } from '../dtos/create-appUser.dto';
 import { UpdateAppUserDto } from '../dtos/update-appUser.dto';
-import { IbapUserType } from '../types/ibapUser.type';
-import { UpdateIbapUserDto } from '../dtos/update-ibapUser.dto';
-import { CreateIbapUserDto } from '../dtos/create-ibapUser.dto';
+import { UserType } from '../types/User.type';
+import { UpdateUserDto } from '../dtos/update-User.dto';
+import { CreateUserDto } from '../dtos/create-User.dto';
 import { UpdateAppUserPasswordDto } from '../dtos/update-appUser-password.dto';
 import { LoginType } from 'src/features/auth/types/loginType';
 import { LoginAppUserDto } from '../dtos/login-appUser.dto';
@@ -95,11 +95,11 @@ export class CommandResolver {
   }
 
 
-  // -------------------------  IbapUser ------------------------------------------ //
+  // -------------------------  User ------------------------------------------ //
 
-  @Mutation(returns => IbapUserType)
+  @Mutation(returns => UserType)
   async createExecutiveUser(
-    @Args('data') data: CreateIbapUserDto,
+    @Args('data') data: CreateUserDto,
     @TokenUser() user: any,
     ) {
     return await this.nats
@@ -125,9 +125,9 @@ export class CommandResolver {
   }
 
   //@ACRoles(['Admin', 'SuperAdmin'])
-  @Mutation(returns => IbapUserType)
+  @Mutation(returns => UserType)
   async updateExecutiveUser(
-    @Args('data') data: UpdateIbapUserDto,
+    @Args('data') data: UpdateUserDto,
     @TokenUser() user: any,
     ) {
     return await this.nats
@@ -144,7 +144,7 @@ export class CommandResolver {
   }
 
   //@ACRoles(['Admin', 'SuperAdmin'])
-  @Mutation(returns => IbapUserType)
+  @Mutation(returns => UserType)
   async updateExecutiveUserStatus(
     @Args('data') data: UpdateExecutiveStatusDto,
     @TokenUser() user: any,
@@ -163,7 +163,7 @@ export class CommandResolver {
   }
 
   //@ACRoles(['Admin', 'SuperAdmin'])
-  @Mutation(returns => IbapUserType)
+  @Mutation(returns => UserType)
   async deleteExecutiveUser(
     @Args('data') data: DeleteDto,
     @TokenUser() user: any,

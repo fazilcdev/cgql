@@ -9,7 +9,7 @@ import { RPCServices } from 'chatbuk-common/dist/services/rpc-services';
 import { Users } from 'chatbuk-common/dist/services/users/services';
 import { GraphQLError } from 'graphql';
 import { AppUserType } from '../types/appUser.type';
-import { IbapUserType } from '../types/ibapUser.type';
+import { UserType } from '../types/User.type';
 
 import { MobileVerificationType } from '../types/mobileVerification.type';
 
@@ -84,9 +84,9 @@ export class QueryResolver {
         throw new GraphQLError(e.message);
       });
   }
-  // // ...............................ibapUser....................................//
+  // // ...............................User....................................//
 
-  @Query(returns => IbapUserType, { nullable: true })
+  @Query(returns => UserType, { nullable: true })
   async GetOneExecutiveUser(
     @GqlFieldsMap() fieldsMap: any,
     @GqlProjection() projection,
@@ -104,7 +104,7 @@ export class QueryResolver {
   }
 
   //@ACRoles([ 'User','Admin', 'SuperAdmin'])
-  @Query(returns => [IbapUserType])
+  @Query(returns => [UserType])
   async GetManyExecutiveUser(
     @GqlFieldsMap() fieldsMap: any,
     @GqlProjection() projection,

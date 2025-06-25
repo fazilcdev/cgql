@@ -3,7 +3,7 @@ import { GraphQLJSONObject } from 'graphql-type-json';
 
 
 @InputType()
-export class UpdateIbapUserLogDto {
+export class UpdateUserLogDto {
 
   @Field()
   id: string;

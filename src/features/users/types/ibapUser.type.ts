@@ -3,7 +3,7 @@ import { GraphQLJSONObject } from 'graphql-type-json';
 import { AuthUserType } from '../../auth/types/authuser.type';
 
 @ObjectType()
-export class IbapUserType {
+export class UserType {
   @Field()
   id: string;
 
