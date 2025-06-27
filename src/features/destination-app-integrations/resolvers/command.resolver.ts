@@ -1,38 +1,34 @@
 import { Resolver, Mutation, Args } from '@nestjs/graphql';
 import { NatsClientService } from 'chatbuk-common/dist/common/rpc-clients/nats/nats-client.module';
 import { RPCServices } from 'chatbuk-common/dist/services/rpc-services';
-import { Subscription } from 'chatbuk-common/dist/services/subscription/services';
+import { DestinationApp } from 'chatbuk-common/dist/services/destination-app-integrations/services';
 import { Int } from '@nestjs/graphql';
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { DeleteDto } from '../../../common/dtos/delete.dto';
 import { GraphQLError } from 'graphql';
 
-import { CreateSubscriptionPlanDto } from '../dtos/create-subscription-plan.dto';
-import { UpdateSubscriptionPlanDto } from '../dtos/update-subscription-plan.dto';
-
-import { SubscriptionPlanType } from '../types/subscriptionPlan.type';
-
 import { ACRoles } from '../../../common/access-controll/decorators/ac-roles.decorator';
 import { TokenUser } from '../../../common/authentication/decorators/tokenUser.decorator';
+import { DestinationAppType } from '../types/destinationApp.type';
+import { UpdateDestinationAppDto } from '../dtos/update-destination-app.dto';
+import { CreateDestinationAppDto } from '../dtos/create-destination-app.dto';
 
 @Resolver()
 export class CommandResolver {
   constructor(private readonly nats: NatsClientService) {}
 
-  // Message_Patterns
-
-  // -------------------------  Subscription plan ------------------------------------------ //
+  // -------------------------  DestinationApp ------------------------------------------ //
 
   //@ACRoles(['Admin', 'SuperAdmin'])
-  @Mutation(returns => SubscriptionPlanType)
-  async createSubscriptionPlan(
-    @Args('data') data: CreateSubscriptionPlanDto,
+  @Mutation(returns => DestinationAppType)
+  async createDestinationApp(
+    @Args('data') data: CreateDestinationAppDto,
     @TokenUser() user: any,
     ) {
     return await this.nats
       .sendSync(
-        RPCServices.Subscription, 
-        Subscription.CreateSubscriptionPlanCommand, 
+        RPCServices.DestinationApp, 
+        DestinationApp.CreateDestinationAppCommand, 
         { data: data, tokenUser: user },
       )
       .catch(e => {
@@ -42,16 +38,16 @@ export class CommandResolver {
   }
 
   //@ACRoles(['Admin', 'SuperAdmin'])
-  @Mutation(returns => SubscriptionPlanType)
-  async updateSubscriptionPlan(
-    @Args('data') data: UpdateSubscriptionPlanDto,
+  @Mutation(returns => DestinationAppType)
+  async updateDestinationApp(
+    @Args('data') data: UpdateDestinationAppDto,
     @TokenUser() user: any,
 
     ) {
     return await this.nats
       .sendSync(
-        RPCServices.Subscription, 
-        Subscription.UpdateSubscriptionPlanCommand, 
+        RPCServices.DestinationApp, 
+        DestinationApp.UpdateDestinationAppCommand, 
         { data: data, tokenUser: user },
       )
       .catch(e => {
@@ -60,15 +56,15 @@ export class CommandResolver {
   }
 
   //@ACRoles(['Admin', 'SuperAdmin'])
-  @Mutation(returns => SubscriptionPlanType)
-  async deleteSubscriptionPlan(
+  @Mutation(returns => DestinationAppType)
+  async deleteDestinationApp(
     @Args('data') data: DeleteDto,
     @TokenUser() user: any,
     ) {
     return await this.nats
       .sendSync(
-        RPCServices.Subscription, 
-        Subscription.DeleteSubscriptionPlanCommand, 
+        RPCServices.DestinationApp, 
+        DestinationApp.DeleteDestinationAppCommand, 
         { data: data, tokenUser: user },
       )
       .catch(e => {
@@ -76,5 +72,4 @@ export class CommandResolver {
       });
   }
 
-  
 }

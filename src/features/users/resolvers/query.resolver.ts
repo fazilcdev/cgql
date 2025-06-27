@@ -9,7 +9,6 @@ import { RPCServices } from 'chatbuk-common/dist/services/rpc-services';
 import { Users } from 'chatbuk-common/dist/services/users/services';
 import { GraphQLError } from 'graphql';
 import { AppUserType } from '../types/appUser.type';
-import { IbapUserType } from '../types/ibapUser.type';
 
 import { MobileVerificationType } from '../types/mobileVerification.type';
 
@@ -17,8 +16,6 @@ import { MobileVerificationType } from '../types/mobileVerification.type';
 @Resolver()
 export class QueryResolver {
   constructor(private readonly nats: NatsClientService) { }
-
-  
 
   // ...............................appUser....................................//
 
@@ -84,68 +81,4 @@ export class QueryResolver {
         throw new GraphQLError(e.message);
       });
   }
-  // // ...............................ibapUser....................................//
-
-  @Query(returns => IbapUserType, { nullable: true })
-  async GetOneExecutiveUser(
-    @GqlFieldsMap() fieldsMap: any,
-    @GqlProjection() projection,
-    @Args({ name: 'condition', nullable: true, type: () => GraphQLJSONObject })
-    condition: any,
-  ) {
-    return await this.nats
-      .sendSync(RPCServices.Users, Users.GetOneExecutiveUserQuery, {
-        condition: condition,
-        fieldsMap: fieldsMap,
-      })
-      .catch(e => {
-        throw new GraphQLError(e.message);
-      });
-  }
-
-  //@ACRoles([ 'User','Admin', 'SuperAdmin'])
-  @Query(returns => [IbapUserType])
-  async GetManyExecutiveUser(
-    @GqlFieldsMap() fieldsMap: any,
-    @GqlProjection() projection,
-    @Args({ name: 'limit', nullable: true, type: () => Int }) limit: number,
-    @Args({ name: 'skip', nullable: true, type: () => Int }) skip: number,
-    @Args({ name: 'sort', nullable: true, type: () => String }) sort: string,
-    @Args({ name: 'condition', nullable: true, type: () => GraphQLJSONObject })
-    condition: any,
-  ) {
-    return await this.nats
-      .sendSync(RPCServices.Users, Users.GetManyExecutiveUserQuery, {
-        limit: limit,
-        skip: skip,
-        sort: sort,
-        condition: condition,
-        fieldsMap: fieldsMap,
-      })
-      .catch(e => {
-        throw new GraphQLError(e.message);
-      });
-  }
-
-  @Query(returns => String, { nullable: true })
-  async GetExecutiveUserCount(
-    @GqlFieldsMap() fieldsMap: any,
-    @GqlProjection() projection,
-    @Args({ name: 'condition', nullable: true, type: () => GraphQLJSONObject })
-    condition: any,
-  ) {
-    return await this.nats
-      .sendSync(RPCServices.Users, Users.GetExecutiveUserCountQuery, {
-        // limit: limit,
-        // skip: skip,
-        // sort: sort,
-        condition: condition,
-        fieldsMap: fieldsMap,
-      })
-      .catch(e => {
-        throw new GraphQLError(e.message);
-      });
-  }
-
-
 }

@@ -4,7 +4,6 @@ import * as dotenv from 'dotenv';
 import { Transport } from '@nestjs/microservices';
 
 async function bootstrap() {
-  console.log('bootstarp call')
   global['config'] = await dotenv.config().parsed;
 
   const app = await NestFactory.create(AppModule);

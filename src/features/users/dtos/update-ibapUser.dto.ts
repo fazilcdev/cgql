@@ -2,7 +2,7 @@ import { Field, InputType } from '@nestjs/graphql';
 import { GraphQLJSONObject } from 'graphql-type-json';
 
 @InputType()
-export class UpdateIbapUserDto {
+export class UpdateUserDto {
 
   @Field()
   id: string;

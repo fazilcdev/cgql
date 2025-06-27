@@ -6,9 +6,9 @@ import { Int } from "@nestjs/graphql";
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { DeleteDto } from "../../../common/dtos/delete.dto";
 import { GraphQLError } from 'graphql';
-import { IbapUserLogType } from "../types/ibapUserLog.type";
-import { CreateIbapUserLogDto } from "../dtos/create-ibapUserLog.dto";
-import { UpdateIbapUserLogDto } from "../dtos/update-ibapUserLog.dto";
+import { UserLogType } from "../types/userLog.type";
+import { CreateUserLogDto } from "../dtos/create-userLog.dto";
+import { UpdateUserLogDto } from "../dtos/update-userLog.dto";
 
 
 @Resolver()
@@ -20,21 +20,21 @@ export class CommandResolver {
 
   // Message_Patterns
   
-// -------------------------  IbapUserLog ------------------------------------------ //
+// -------------------------  UserLog ------------------------------------------ //
 
-  @Mutation(returns => IbapUserLogType)
-    async createIbapUserLog(@Args('data') data: CreateIbapUserLogDto) {
-      return await this.nats.sendSync(RPCServices.Auditlog, Auditlog.CreateIbapUserLogCommand, data).catch((e) => { throw new GraphQLError(e.messagee) });
+  @Mutation(returns => UserLogType)
+    async createUserLog(@Args('data') data: CreateUserLogDto) {
+      return await this.nats.sendSync(RPCServices.Auditlog, Auditlog.CreateUserLogCommand, data).catch((e) => { throw new GraphQLError(e.messagee) });
   }
 
-  @Mutation(returns => IbapUserLogType)
-    async updateIbapUserLog(@Args('data') data: UpdateIbapUserLogDto) {
-      return await this.nats.sendSync(RPCServices.Auditlog, Auditlog.UpdateIbapUserLogCommand, data).catch((e) => { throw new GraphQLError(e.message) });
+  @Mutation(returns => UserLogType)
+    async updateUserLog(@Args('data') data: UpdateUserLogDto) {
+      return await this.nats.sendSync(RPCServices.Auditlog, Auditlog.UpdateUserLogCommand, data).catch((e) => { throw new GraphQLError(e.message) });
   }
 
-  @Mutation(returns => IbapUserLogType)
-    async deleteIbapUserLog(@Args('data') data: DeleteDto) {
-      return await this.nats.sendSync(RPCServices.Auditlog, Auditlog.DeleteIbapUserLogCommand, data).catch((e) => { throw new GraphQLError(e.message) });
+  @Mutation(returns => UserLogType)
+    async deleteUserLog(@Args('data') data: DeleteDto) {
+      return await this.nats.sendSync(RPCServices.Auditlog, Auditlog.DeleteUserLogCommand, data).catch((e) => { throw new GraphQLError(e.message) });
   }
 
   

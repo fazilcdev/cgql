@@ -24,23 +24,10 @@ export class CommandResolver {
   @Mutation(returns => ContactPageType)
   async createContactPage(@Args('data') data: CreateContactPageDto) {
     return await this.nats
-      .sendSync(RPCServices.WebPage, WebPage.CreateContactUsPageCommand, data)
+      .sendSync(RPCServices.WebPage, WebPage.CreateWebPageCommand, data)
       .catch(e => {
         throw new GraphQLError(e.message);
       });
   }
 
-  // -------------------------  App Version ------------------------------------------ //
-
-  //@ACRoles(['SuperAdmin'])
-  @Mutation(returns => AppVersionType)
-  async createAppVersion(@Args('data') data: CreateAppVersionDto) {
-    return await this.nats
-      .sendSync(RPCServices.WebPage, WebPage.CreateAppVersionCommand, data)
-      .catch(e => {
-        throw new GraphQLError(e.message);
-      });
-  }
-
-  
 }

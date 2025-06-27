@@ -1,10 +1,9 @@
 import { ObjectType, Field } from '@nestjs/graphql';
 import { GraphQLJSONObject } from 'graphql-type-json';
-import { IbapUserType } from '../../users/types/ibapUser.type';
 import { AuthUserType } from '../../auth/types/authuser.type';
 
 @ObjectType()
-export class IbapUserLogType {
+export class UserLogType {
 
   @Field()
   id: string;

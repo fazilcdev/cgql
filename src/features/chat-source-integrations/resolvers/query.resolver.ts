@@ -5,20 +5,19 @@ import { NatsClientService } from 'chatbuk-common/dist/common/rpc-clients/nats/n
 import { GqlFieldsMap } from 'chatbuk-common/dist/common/decorators/gql-fields-map.decorator';
 import { GqlProjection } from 'chatbuk-common/dist/common/decorators/gql-projection.decorator';
 import { RPCServices } from 'chatbuk-common/dist/services/rpc-services';
-import { Subscription } from 'chatbuk-common/dist/services/subscription/services';
+import { ChatApp } from 'chatbuk-common/dist/services/chat-source-integrations/services';
 import { TokenUser } from '../../../common/authentication/decorators/tokenUser.decorator';
 import { GraphQLError } from 'graphql';
-
-import { SubscriptionPlanType } from '../types/subscriptionPlan.type';
+import { ChatAppType } from '../types/chatApp.type';
 
 @Resolver()
 export class QueryResolver {
   constructor(private readonly nats: NatsClientService) {}
 
-  // -------------------------  Subscription Plan ------------------------------------------ //
+  // -------------------------  ChatApp ------------------------------------------ //
 
   @Query(returns => String, { nullable: true })
-  async GetSubscriptionPlansCount(
+  async GetChatAppsCount(
     @GqlFieldsMap() fieldsMap: any,
     @GqlProjection() projection,
     @Args({ name: 'condition', nullable: true, type: () => GraphQLJSONObject })
@@ -26,7 +25,7 @@ export class QueryResolver {
   ) {
     
     return await this.nats
-      .sendSync(RPCServices.Subscription, Subscription.GetSubscriptionPlansCountQuery, {
+      .sendSync(RPCServices.ChatApp, ChatApp.GetChatAppCountQuery, {
         condition: condition,
         fieldsMap: fieldsMap,
       })
@@ -35,15 +34,15 @@ export class QueryResolver {
       });
   }
 
-  @Query(returns => SubscriptionPlanType, { nullable: true })
-  async getOneSubscriptionPlan(
+  @Query(returns => ChatAppType, { nullable: true })
+  async getOneChatApp(
     @GqlFieldsMap() fieldsMap: any,
     @GqlProjection() projection,
     @Args({ name: 'condition', nullable: true, type: () => GraphQLJSONObject })
     condition: any,
   ) {
     return await this.nats
-      .sendSync(RPCServices.Subscription, Subscription.GetOneSubscriptionPlanQuery, {
+      .sendSync(RPCServices.ChatApp, ChatApp.GetOneChatAppQuery, {
         condition: condition,
         fieldsMap: fieldsMap,
       })
@@ -52,8 +51,8 @@ export class QueryResolver {
       });
   }
 
-  @Query(returns => [SubscriptionPlanType])
-  async getManySubscriptionPlans(
+  @Query(returns => [ChatAppType])
+  async getManyChatApps(
     @GqlFieldsMap() fieldsMap: any,
     @GqlProjection() projection,
     @Args({ name: 'limit', nullable: true, type: () => Int }) limit: number,
@@ -63,7 +62,7 @@ export class QueryResolver {
     condition: any,
   ) {
     return await this.nats
-      .sendSync(RPCServices.Subscription, Subscription.GetManySubscriptionPlansQuery, {
+      .sendSync(RPCServices.ChatApp, ChatApp.GetManyChatAppQuery, {
         limit: limit,
         skip: skip,
         sort: sort,
@@ -71,8 +70,10 @@ export class QueryResolver {
         fieldsMap: fieldsMap,
       })
       .catch(e => {
+        console.log(e.message)
         throw new GraphQLError(e.message);
       });
   }
 
+ 
 }

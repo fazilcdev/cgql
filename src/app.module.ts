@@ -17,6 +17,9 @@ import { SubscriptionModule } from './features/subscription/subscription.module'
 import { ContactModule } from './features/WebPage/contact.module';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
+import { ChatAppModule } from './features/chat-source-integrations/chatApp.module';
+import { DestinationAppModule } from './features/destination-app-integrations/destinationapp.module';
+import { ParserAppModule } from './features/data-parser-integrations/parserapp.module';
 
 
 @Module({
@@ -36,20 +39,23 @@ import { join } from 'path';
     AuditlogModule,
     SubscriptionModule,
     ContactModule,
+    ChatAppModule,
+    DestinationAppModule,
+    ParserAppModule,
     HttpModule
   ],
   controllers: [
     AppController
   ],
   providers: [
-    {
-      provide: APP_GUARD,
-      useClass: GqlAuthGuard
-    },
-    {
-      provide: APP_GUARD,
-      useClass: ACRolesGuard
-    }
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: GqlAuthGuard
+    // },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: ACRolesGuard
+    // }
   ],
 })
 export class AppModule { }

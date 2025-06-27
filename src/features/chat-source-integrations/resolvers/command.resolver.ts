@@ -1,19 +1,17 @@
 import { Resolver, Mutation, Args } from '@nestjs/graphql';
 import { NatsClientService } from 'chatbuk-common/dist/common/rpc-clients/nats/nats-client.module';
 import { RPCServices } from 'chatbuk-common/dist/services/rpc-services';
-import { Subscription } from 'chatbuk-common/dist/services/subscription/services';
+import { ChatApp } from 'chatbuk-common/dist/services/chat-source-integrations/services';
 import { Int } from '@nestjs/graphql';
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { DeleteDto } from '../../../common/dtos/delete.dto';
 import { GraphQLError } from 'graphql';
 
-import { CreateSubscriptionPlanDto } from '../dtos/create-subscription-plan.dto';
-import { UpdateSubscriptionPlanDto } from '../dtos/update-subscription-plan.dto';
-
-import { SubscriptionPlanType } from '../types/subscriptionPlan.type';
-
 import { ACRoles } from '../../../common/access-controll/decorators/ac-roles.decorator';
 import { TokenUser } from '../../../common/authentication/decorators/tokenUser.decorator';
+import { ChatAppType } from '../types/chatApp.type';
+import { UpdateChatAppDto } from '../dtos/update-chat-app.dto';
+import { CreateChatAppDto } from '../dtos/create-chat-app.dto';
 
 @Resolver()
 export class CommandResolver {
@@ -21,18 +19,18 @@ export class CommandResolver {
 
   // Message_Patterns
 
-  // -------------------------  Subscription plan ------------------------------------------ //
+  // -------------------------  Chat App ------------------------------------------ //
 
   //@ACRoles(['Admin', 'SuperAdmin'])
-  @Mutation(returns => SubscriptionPlanType)
-  async createSubscriptionPlan(
-    @Args('data') data: CreateSubscriptionPlanDto,
+  @Mutation(returns => ChatAppType)
+  async createChatApp(
+    @Args('data') data: CreateChatAppDto,
     @TokenUser() user: any,
     ) {
     return await this.nats
       .sendSync(
-        RPCServices.Subscription, 
-        Subscription.CreateSubscriptionPlanCommand, 
+        RPCServices.ChatApp, 
+        ChatApp.CreateChatAppCommand, 
         { data: data, tokenUser: user },
       )
       .catch(e => {
@@ -42,16 +40,16 @@ export class CommandResolver {
   }
 
   //@ACRoles(['Admin', 'SuperAdmin'])
-  @Mutation(returns => SubscriptionPlanType)
-  async updateSubscriptionPlan(
-    @Args('data') data: UpdateSubscriptionPlanDto,
+  @Mutation(returns => ChatAppType)
+  async updateChatApp(
+    @Args('data') data: UpdateChatAppDto,
     @TokenUser() user: any,
 
     ) {
     return await this.nats
       .sendSync(
-        RPCServices.Subscription, 
-        Subscription.UpdateSubscriptionPlanCommand, 
+        RPCServices.ChatApp, 
+        ChatApp.UpdateChatAppCommand, 
         { data: data, tokenUser: user },
       )
       .catch(e => {
@@ -60,15 +58,15 @@ export class CommandResolver {
   }
 
   //@ACRoles(['Admin', 'SuperAdmin'])
-  @Mutation(returns => SubscriptionPlanType)
-  async deleteSubscriptionPlan(
+  @Mutation(returns => ChatAppType)
+  async deleteChatApp(
     @Args('data') data: DeleteDto,
     @TokenUser() user: any,
     ) {
     return await this.nats
       .sendSync(
-        RPCServices.Subscription, 
-        Subscription.DeleteSubscriptionPlanCommand, 
+        RPCServices.ChatApp, 
+        ChatApp.DeleteChatAppCommand, 
         { data: data, tokenUser: user },
       )
       .catch(e => {
@@ -76,5 +74,4 @@ export class CommandResolver {
       });
   }
 
-  
 }

@@ -2,10 +2,7 @@ import { InputType, Field } from '@nestjs/graphql';
 import { GraphQLJSONObject } from 'graphql-type-json';
 
 @InputType()
-export class UpdateFreePlanDto {
-
-  @Field()
-  id: string;
+export class CreateChatAppDto {
 
   @Field()
   name: string;
@@ -14,21 +11,18 @@ export class UpdateFreePlanDto {
   description: string;
 
   @Field()
-  total_coins: number;
+  appCode: string;
 
   @Field({nullable: true})
-  start_from: Date;
+  logo: string;
 
   @Field({nullable: true})
-  end_to: Date;
+  deviceType: string;
 
   @Field({nullable: true})
-  number_of_days: number;
+  readMore: string;
 
-  @Field({nullable: true})
-  max_coin_per_day: number;
-
-  @Field()
-  user_level: string;
+  @Field(() => GraphQLJSONObject, {nullable: true})
+  details: any;
 
 }

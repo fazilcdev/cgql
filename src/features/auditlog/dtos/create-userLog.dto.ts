@@ -3,15 +3,14 @@ import { GraphQLJSONObject } from 'graphql-type-json';
 
 
 @InputType()
-export class UpdateIbapUserLogDto {
+export class CreateUserLogDto {
+
+  
 
   @Field()
-  id: string;
-
-  @Field({ nullable: true })
   action: string;
 
-  @Field({ nullable: true })
+  @Field()
   entity: string;
 
   @Field(() => GraphQLJSONObject, { nullable: true })

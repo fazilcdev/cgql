@@ -7,7 +7,7 @@ import { GqlProjection } from "chatbuk-common/dist/common/decorators/gql-project
 import { RPCServices } from "chatbuk-common/dist/services/rpc-services";
 import { Auditlog } from "chatbuk-common/dist/services/auditlog/services";
 import { GraphQLError } from 'graphql';
-import { IbapUserLogType } from "../types/ibapUserLog.type";
+import { UserLogType } from "../types/userLog.type";
 
 @Resolver()
 export class QueryResolver {
@@ -18,22 +18,22 @@ export class QueryResolver {
 
   // Message_Patterns
 
-// -------------------------  IbapUserLog ------------------------------------------ //
+// -------------------------  UserLog ------------------------------------------ //
 
-  @Query(returns => IbapUserLogType, { nullable: true })
-  async getOneIbapUserLog(
+  @Query(returns => UserLogType, { nullable: true })
+  async getOneUserLog(
     @GqlFieldsMap() fieldsMap: any,
     @GqlProjection() projection,
     @Args({ name: 'condition', nullable: true, type: () => GraphQLJSONObject }) condition: any
   ) {
-    return await this.nats.sendSync(RPCServices.Auditlog, Auditlog.GetOneIbapUserLogQuery, {
+    return await this.nats.sendSync(RPCServices.Auditlog, Auditlog.GetOneUserLogQuery, {
       condition: condition,
       fieldsMap: fieldsMap
     }).catch((e) => { throw new GraphQLError(e) });
   }
 
-  @Query(returns => [IbapUserLogType])
-  async getManyIbapUserLogs(
+  @Query(returns => [UserLogType])
+  async getManyUserLogs(
     @GqlFieldsMap() fieldsMap: any,
     @GqlProjection() projection,
     @Args({ name: 'limit', nullable: true, type: () => Int }) limit: number,
@@ -41,7 +41,7 @@ export class QueryResolver {
     @Args({ name: 'sort', nullable: true, type: () => String }) sort: string,
     @Args({ name: 'condition', nullable: true, type: () => GraphQLJSONObject }) condition: any
   ) {
-    return await this.nats.sendSync(RPCServices.Auditlog, Auditlog.GetManyIbapUserLogQuery, {
+    return await this.nats.sendSync(RPCServices.Auditlog, Auditlog.GetManyUserLogQuery, {
       limit: limit,
       skip: skip,
       sort: sort,
@@ -51,12 +51,12 @@ export class QueryResolver {
   }
 
   @Query(returns => String, { nullable: true })
-  async GetIbapUserLogCount(
+  async GetUserLogCount(
     @GqlFieldsMap() fieldsMap: any,
     @GqlProjection() projection,
     @Args({ name: 'condition', nullable: true, type: () => GraphQLJSONObject }) condition: any
   ) {
-    return await this.nats.sendSync(RPCServices.Auditlog, Auditlog.GetIbapUserLogCountQuery, {
+    return await this.nats.sendSync(RPCServices.Auditlog, Auditlog.GetUserLogCountQuery, {
       condition: condition,
       fieldsMap: fieldsMap
     }).catch((e) => { throw new GraphQLError(e) });
