@@ -23,6 +23,7 @@ import { AuthUserType } from '../../auth/types/authuser.type';
 import { AppUserType } from '../types/appUser.type';
 import { CreateAppUserDto } from '../dtos/create-appUser.dto';
 import { UpdateAppUserDto } from '../dtos/update-appUser.dto';
+
 import { UpdateAppUserPasswordDto } from '../dtos/update-appUser-password.dto';
 import { LoginType } from 'src/features/auth/types/loginType';
 import { LoginAppUserDto } from '../dtos/login-appUser.dto';

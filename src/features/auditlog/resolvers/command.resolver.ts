@@ -10,7 +10,6 @@ import { UserLogType } from "../types/userLog.type";
 import { CreateUserLogDto } from "../dtos/create-userLog.dto";
 import { UpdateUserLogDto } from "../dtos/update-userLog.dto";
 
-
 @Resolver()
 export class CommandResolver {
 

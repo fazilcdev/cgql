@@ -9,7 +9,6 @@ import { RPCServices } from 'chatbuk-common/dist/services/rpc-services';
 import { Users } from 'chatbuk-common/dist/services/users/services';
 import { GraphQLError } from 'graphql';
 import { AppUserType } from '../types/appUser.type';
-
 import { MobileVerificationType } from '../types/mobileVerification.type';
 
 
