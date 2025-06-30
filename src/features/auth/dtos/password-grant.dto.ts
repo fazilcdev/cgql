@@ -3,7 +3,7 @@ import { Field, InputType } from '@nestjs/graphql';
 @InputType()
 export class PasswordGrantDto {
   @Field()
-  username: string;
+  mobile: string;
 
   @Field()
   password: string;

@@ -8,11 +8,8 @@ export class CreateAppUserDto {
   @Field()
   firstName: string;
 
-  @Field()
+  @Field({nullable: true})
   lastName: string;
-
-  @Field()
-  username: string;
 
   @Field({nullable: true})
   email: string;

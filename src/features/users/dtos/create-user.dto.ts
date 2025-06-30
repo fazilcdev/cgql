@@ -22,9 +22,6 @@ export class CreateUserDto {
   lastName: string;
 
   @Field()
-  username: string;
-
-  @Field()
   email: string;
 
   @Field()

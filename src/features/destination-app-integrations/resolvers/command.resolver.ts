@@ -12,6 +12,8 @@ import { TokenUser } from '../../../common/authentication/decorators/tokenUser.d
 import { DestinationAppType } from '../types/destinationApp.type';
 import { UpdateDestinationAppDto } from '../dtos/update-destination-app.dto';
 import { CreateDestinationAppDto } from '../dtos/create-destination-app.dto';
+import { DestinationAppCredentialType } from '../types/destinationAppCredential.type';
+import { CheckUserHasAppDto } from '../dtos/check-user-has-app.dto';
 
 @Resolver()
 export class CommandResolver {
@@ -68,6 +70,23 @@ export class CommandResolver {
         { data: data, tokenUser: user },
       )
       .catch(e => {
+        throw new GraphQLError(e.message);
+      });
+  }
+
+  @Mutation(returns => DestinationAppCredentialType, { nullable: true })
+  async checkUserHasApp(
+    @Args('data') data: CheckUserHasAppDto,
+    @TokenUser() user: any,
+    ) {
+    return await this.nats
+      .sendSync(
+        RPCServices.DestinationApp, 
+        DestinationApp.CheckUserHasLeastOneAppCommand, 
+        { data: data, tokenUser: user },
+      )
+      .catch(e => {
+        console.log('e', e)
         throw new GraphQLError(e.message);
       });
   }

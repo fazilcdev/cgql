@@ -13,9 +13,6 @@ export class CreateAuthUserDto {
   lastName: string;
 
   @Field()
-  username: string;
-
-  @Field()
   email: string;
 
   @Field()

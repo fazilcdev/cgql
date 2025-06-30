@@ -12,20 +12,14 @@ export class AuthUserType {
   @Field()
   firstName: string;
 
-  @Field()
+  @Field({nullable:true})
   lastName: string;
 
-  @Field()
-  username: string;
-
-  @Field()
+  @Field({nullable:true})
   email: string;
 
   @Field()
   mobile: string;
-
-  @Field()
-  password: string;
 
   @Field()
   isActive: boolean;

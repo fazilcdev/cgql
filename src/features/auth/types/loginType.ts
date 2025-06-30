@@ -16,9 +16,4 @@ export class LoginType {
   @Field({ nullable: true })
   customer_code: string;
 
-  @Field({ nullable: true })
-  executive_code: string;
-
-  @Field({ nullable: true })
-  workerSid: string;
 }
