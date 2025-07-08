@@ -5,7 +5,7 @@ import { NatsClientService } from 'chatbuk-common/dist/common/rpc-clients/nats/n
 import { GqlFieldsMap } from 'chatbuk-common/dist/common/decorators/gql-fields-map.decorator';
 import { GqlProjection } from 'chatbuk-common/dist/common/decorators/gql-projection.decorator';
 import { RPCServices } from 'chatbuk-common/dist/services/rpc-services';
-import { WebPage } from 'chatbuk-common/dist/services/WebPage/services';
+import { WebPage } from 'chatbuk-common/dist/services/webPage/services';
 import { GraphQLError } from 'graphql';
 import { ContactPageType } from '../types/contactPage.type';
 import { AppVersionType } from '../types/appVersion.type';
