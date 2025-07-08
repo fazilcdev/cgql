@@ -14,7 +14,7 @@ import { ACModule } from './common/access-controll/ac.module';
 import { AuditlogModule } from './features/auditlog/auditlog.module';
 import { AppController } from './features/app.controller';
 import { SubscriptionModule } from './features/subscription/subscription.module';
-import { ContactModule } from './features/webPage/contact.module';
+import { ContactModule } from './features/webpage/contact.module';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { ChatAppModule } from './features/chat-source-integrations/chatApp.module';
