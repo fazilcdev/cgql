@@ -7,7 +7,7 @@ import { CacheModule } from './common/cache/cache.module';
 import { APP_GUARD } from '@nestjs/core';
 import { ACRolesGuard } from './common/access-controll/guards/ac-roles.guard';
 import { GqlAuthGuard } from './common/authentication/guards/gql-auth.guard';
-import { NatsClientModule } from 'chatbuk-common/dist/common/rpc-clients/nats/nats-client.module';
+import { NatsClientModule } from 'selfpod-common/dist/common/rpc-clients/nats/nats-client.module';
 import { UsersModule } from './features/users/users.module';
 import { AuthModule } from './features/auth/auth.module';
 import { ACModule } from './common/access-controll/ac.module';
@@ -30,7 +30,7 @@ import { ParserAppModule } from './features/data-parser-integrations/parserapp.m
     ACModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
-      autoSchemaFile: join(__dirname, 'schema.gql'), 
+      autoSchemaFile: join(__dirname, 'schema.gql'),
       context: ({ req }) => ({ req }),
       playground: true,
     }),

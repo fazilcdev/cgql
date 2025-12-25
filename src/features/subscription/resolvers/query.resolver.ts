@@ -1,11 +1,11 @@
 import { Resolver, Args, Query } from '@nestjs/graphql';
 import { Int } from '@nestjs/graphql';
 import { GraphQLJSONObject } from 'graphql-type-json';
-import { NatsClientService } from 'chatbuk-common/dist/common/rpc-clients/nats/nats-client.module';
-import { GqlFieldsMap } from 'chatbuk-common/dist/common/decorators/gql-fields-map.decorator';
-import { GqlProjection } from 'chatbuk-common/dist/common/decorators/gql-projection.decorator';
-import { RPCServices } from 'chatbuk-common/dist/services/rpc-services';
-import { Subscription } from 'chatbuk-common/dist/services/subscription/services';
+import { NatsClientService } from 'selfpod-common/dist/common/rpc-clients/nats/nats-client.module';
+import { GqlFieldsMap } from 'selfpod-common/dist/common/decorators/gql-fields-map.decorator';
+import { GqlProjection } from 'selfpod-common/dist/common/decorators/gql-projection.decorator';
+import { RPCServices } from 'selfpod-common/dist/services/rpc-services';
+import { Subscription } from 'selfpod-common/dist/services/subscription/services';
 import { TokenUser } from '../../../common/authentication/decorators/tokenUser.decorator';
 import { GraphQLError } from 'graphql';
 
@@ -13,7 +13,7 @@ import { SubscriptionPlanType } from '../types/subscriptionPlan.type';
 
 @Resolver()
 export class QueryResolver {
-  constructor(private readonly nats: NatsClientService) {}
+  constructor(private readonly nats: NatsClientService) { }
 
   // -------------------------  Subscription Plan ------------------------------------------ //
 
@@ -24,7 +24,7 @@ export class QueryResolver {
     @Args({ name: 'condition', nullable: true, type: () => GraphQLJSONObject })
     condition: any,
   ) {
-    
+
     return await this.nats
       .sendSync(RPCServices.Subscription, Subscription.GetSubscriptionPlansCountQuery, {
         condition: condition,

@@ -1,7 +1,7 @@
 import { Resolver, Mutation, Args } from '@nestjs/graphql';
-import { NatsClientService } from 'chatbuk-common/dist/common/rpc-clients/nats/nats-client.module';
-import { RPCServices } from 'chatbuk-common/dist/services/rpc-services';
-import { ChatDataParser } from 'chatbuk-common/dist/services/chat-data-parser/services';
+import { NatsClientService } from 'selfpod-common/dist/common/rpc-clients/nats/nats-client.module';
+import { RPCServices } from 'selfpod-common/dist/services/rpc-services';
+import { ChatDataParser } from 'selfpod-common/dist/services/chat-data-parser/services';
 import { Int } from '@nestjs/graphql';
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { DeleteDto } from '../../../common/dtos/delete.dto';
@@ -15,7 +15,7 @@ import { CreateParserAppDto } from '../dtos/create-parser-app.dto';
 
 @Resolver()
 export class CommandResolver {
-  constructor(private readonly nats: NatsClientService) {}
+  constructor(private readonly nats: NatsClientService) { }
 
   // Message_Patterns
 
@@ -26,11 +26,11 @@ export class CommandResolver {
   async createParserApp(
     @Args('data') data: CreateParserAppDto,
     @TokenUser() user: any,
-    ) {
+  ) {
     return await this.nats
       .sendSync(
-        RPCServices.ChatDataParser, 
-        ChatDataParser.CreateParserAppCommand, 
+        RPCServices.ChatDataParser,
+        ChatDataParser.CreateParserAppCommand,
         { data: data, tokenUser: user },
       )
       .catch(e => {
@@ -45,11 +45,11 @@ export class CommandResolver {
     @Args('data') data: UpdateParserAppDto,
     @TokenUser() user: any,
 
-    ) {
+  ) {
     return await this.nats
       .sendSync(
-        RPCServices.ChatDataParser, 
-        ChatDataParser.UpdateParserAppCommand, 
+        RPCServices.ChatDataParser,
+        ChatDataParser.UpdateParserAppCommand,
         { data: data, tokenUser: user },
       )
       .catch(e => {
@@ -62,11 +62,11 @@ export class CommandResolver {
   async deleteParserApp(
     @Args('data') data: DeleteDto,
     @TokenUser() user: any,
-    ) {
+  ) {
     return await this.nats
       .sendSync(
-        RPCServices.ChatDataParser, 
-        ChatDataParser.DeleteParserAppCommand, 
+        RPCServices.ChatDataParser,
+        ChatDataParser.DeleteParserAppCommand,
         { data: data, tokenUser: user },
       )
       .catch(e => {

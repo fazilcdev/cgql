@@ -1,7 +1,7 @@
 import { Resolver, Mutation, Args } from '@nestjs/graphql';
-import { NatsClientService } from 'chatbuk-common/dist/common/rpc-clients/nats/nats-client.module';
-import { RPCServices } from 'chatbuk-common/dist/services/rpc-services';
-import { DestinationApp } from 'chatbuk-common/dist/services/destination-app-integrations/services';
+import { NatsClientService } from 'selfpod-common/dist/common/rpc-clients/nats/nats-client.module';
+import { RPCServices } from 'selfpod-common/dist/services/rpc-services';
+import { DestinationApp } from 'selfpod-common/dist/services/destination-app-integrations/services';
 import { Int } from '@nestjs/graphql';
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { DeleteDto } from '../../../common/dtos/delete.dto';
@@ -17,7 +17,7 @@ import { CheckUserHasAppDto } from '../dtos/check-user-has-app.dto';
 
 @Resolver()
 export class CommandResolver {
-  constructor(private readonly nats: NatsClientService) {}
+  constructor(private readonly nats: NatsClientService) { }
 
   // -------------------------  DestinationApp ------------------------------------------ //
 
@@ -26,11 +26,11 @@ export class CommandResolver {
   async createDestinationApp(
     @Args('data') data: CreateDestinationAppDto,
     @TokenUser() user: any,
-    ) {
+  ) {
     return await this.nats
       .sendSync(
-        RPCServices.DestinationApp, 
-        DestinationApp.CreateDestinationAppCommand, 
+        RPCServices.DestinationApp,
+        DestinationApp.CreateDestinationAppCommand,
         { data: data, tokenUser: user },
       )
       .catch(e => {
@@ -45,11 +45,11 @@ export class CommandResolver {
     @Args('data') data: UpdateDestinationAppDto,
     @TokenUser() user: any,
 
-    ) {
+  ) {
     return await this.nats
       .sendSync(
-        RPCServices.DestinationApp, 
-        DestinationApp.UpdateDestinationAppCommand, 
+        RPCServices.DestinationApp,
+        DestinationApp.UpdateDestinationAppCommand,
         { data: data, tokenUser: user },
       )
       .catch(e => {
@@ -62,11 +62,11 @@ export class CommandResolver {
   async deleteDestinationApp(
     @Args('data') data: DeleteDto,
     @TokenUser() user: any,
-    ) {
+  ) {
     return await this.nats
       .sendSync(
-        RPCServices.DestinationApp, 
-        DestinationApp.DeleteDestinationAppCommand, 
+        RPCServices.DestinationApp,
+        DestinationApp.DeleteDestinationAppCommand,
         { data: data, tokenUser: user },
       )
       .catch(e => {
@@ -78,11 +78,11 @@ export class CommandResolver {
   async checkUserHasApp(
     @Args('data') data: CheckUserHasAppDto,
     @TokenUser() user: any,
-    ) {
+  ) {
     return await this.nats
       .sendSync(
-        RPCServices.DestinationApp, 
-        DestinationApp.CheckUserHasLeastOneAppCommand, 
+        RPCServices.DestinationApp,
+        DestinationApp.CheckUserHasLeastOneAppCommand,
         { data: data, tokenUser: user },
       )
       .catch(e => {

@@ -1,11 +1,11 @@
 import { Resolver, Args, Query } from '@nestjs/graphql';
 import { Int } from '@nestjs/graphql';
 import { GraphQLJSONObject } from 'graphql-type-json';
-import { NatsClientService } from 'chatbuk-common/dist/common/rpc-clients/nats/nats-client.module';
-import { GqlFieldsMap } from 'chatbuk-common/dist/common/decorators/gql-fields-map.decorator';
-import { GqlProjection } from 'chatbuk-common/dist/common/decorators/gql-projection.decorator';
-import { RPCServices } from 'chatbuk-common/dist/services/rpc-services';
-import { Auth } from 'chatbuk-common/dist/services/auth/services';
+import { NatsClientService } from 'selfpod-common/dist/common/rpc-clients/nats/nats-client.module';
+import { GqlFieldsMap } from 'selfpod-common/dist/common/decorators/gql-fields-map.decorator';
+import { GqlProjection } from 'selfpod-common/dist/common/decorators/gql-projection.decorator';
+import { RPCServices } from 'selfpod-common/dist/services/rpc-services';
+import { Auth } from 'selfpod-common/dist/services/auth/services';
 import { GraphQLError } from 'graphql';
 
 import { AccessTokenType } from '../types/accesstoken.type';
@@ -16,7 +16,7 @@ import { ClientType } from '../types/client.type';
 
 @Resolver()
 export class QueryResolver {
-  constructor(private readonly nats: NatsClientService) {}
+  constructor(private readonly nats: NatsClientService) { }
 
   // Message_Patterns
 
@@ -64,7 +64,7 @@ export class QueryResolver {
 
   // -------------------------  AuthUser ------------------------------------------ //
 
-  @Query(returns => AuthUserType, { nullable: true})
+  @Query(returns => AuthUserType, { nullable: true })
   async getOneAuthUser(
     @GqlFieldsMap() fieldsMap: any,
     @GqlProjection() projection,
@@ -81,7 +81,7 @@ export class QueryResolver {
       });
   }
 
-  @Query(returns => [AuthUserType], { nullable: true})
+  @Query(returns => [AuthUserType], { nullable: true })
   async getManyAuthUsers(
     @GqlFieldsMap() fieldsMap: any,
     @GqlProjection() projection,

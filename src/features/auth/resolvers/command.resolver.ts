@@ -1,7 +1,7 @@
 import { Resolver, Mutation, Args } from '@nestjs/graphql';
-import { NatsClientService } from 'chatbuk-common/dist/common/rpc-clients/nats/nats-client.module';
-import { RPCServices } from 'chatbuk-common/dist/services/rpc-services';
-import { Auth } from 'chatbuk-common/dist/services/auth/services';
+import { NatsClientService } from 'selfpod-common/dist/common/rpc-clients/nats/nats-client.module';
+import { RPCServices } from 'selfpod-common/dist/services/rpc-services';
+import { Auth } from 'selfpod-common/dist/services/auth/services';
 import { Int } from '@nestjs/graphql';
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { DeleteDto } from '../../../common/dtos/delete.dto';
@@ -27,7 +27,7 @@ import { UpdatePasswordDto } from '../dtos/update-password.dto';
 
 @Resolver()
 export class CommandResolver {
-  constructor(private readonly nats: NatsClientService) {}
+  constructor(private readonly nats: NatsClientService) { }
 
   // Message_Patterns
 

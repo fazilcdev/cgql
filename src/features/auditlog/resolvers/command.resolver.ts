@@ -1,7 +1,7 @@
 import { Resolver, Mutation, Args } from "@nestjs/graphql";
-import { NatsClientService } from 'chatbuk-common/dist/common/rpc-clients/nats/nats-client.module'
-import { RPCServices } from "chatbuk-common/dist/services/rpc-services";
-import { Auditlog } from "chatbuk-common/dist/services/auditlog/services";
+import { NatsClientService } from 'selfpod-common/dist/common/rpc-clients/nats/nats-client.module'
+import { RPCServices } from "selfpod-common/dist/services/rpc-services";
+import { Auditlog } from "selfpod-common/dist/services/auditlog/services";
 import { Int } from "@nestjs/graphql";
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { DeleteDto } from "../../../common/dtos/delete.dto";
@@ -18,23 +18,23 @@ export class CommandResolver {
   ) { }
 
   // Message_Patterns
-  
-// -------------------------  UserLog ------------------------------------------ //
+
+  // -------------------------  UserLog ------------------------------------------ //
 
   @Mutation(returns => UserLogType)
-    async createUserLog(@Args('data') data: CreateUserLogDto) {
-      return await this.nats.sendSync(RPCServices.Auditlog, Auditlog.CreateUserLogCommand, data).catch((e) => { throw new GraphQLError(e.messagee) });
+  async createUserLog(@Args('data') data: CreateUserLogDto) {
+    return await this.nats.sendSync(RPCServices.Auditlog, Auditlog.CreateUserLogCommand, data).catch((e) => { throw new GraphQLError(e.messagee) });
   }
 
   @Mutation(returns => UserLogType)
-    async updateUserLog(@Args('data') data: UpdateUserLogDto) {
-      return await this.nats.sendSync(RPCServices.Auditlog, Auditlog.UpdateUserLogCommand, data).catch((e) => { throw new GraphQLError(e.message) });
+  async updateUserLog(@Args('data') data: UpdateUserLogDto) {
+    return await this.nats.sendSync(RPCServices.Auditlog, Auditlog.UpdateUserLogCommand, data).catch((e) => { throw new GraphQLError(e.message) });
   }
 
   @Mutation(returns => UserLogType)
-    async deleteUserLog(@Args('data') data: DeleteDto) {
-      return await this.nats.sendSync(RPCServices.Auditlog, Auditlog.DeleteUserLogCommand, data).catch((e) => { throw new GraphQLError(e.message) });
+  async deleteUserLog(@Args('data') data: DeleteDto) {
+    return await this.nats.sendSync(RPCServices.Auditlog, Auditlog.DeleteUserLogCommand, data).catch((e) => { throw new GraphQLError(e.message) });
   }
 
-  
+
 }

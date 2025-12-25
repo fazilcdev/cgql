@@ -1,8 +1,8 @@
 
 import { Resolver, Mutation, Args } from '@nestjs/graphql';
-import { NatsClientService } from 'chatbuk-common/dist/common/rpc-clients/nats/nats-client.module';
-import { RPCServices } from 'chatbuk-common/dist/services/rpc-services';
-import { Users } from 'chatbuk-common/dist/services/users/services';
+import { NatsClientService } from 'selfpod-common/dist/common/rpc-clients/nats/nats-client.module';
+import { RPCServices } from 'selfpod-common/dist/services/rpc-services';
+import { Users } from 'selfpod-common/dist/services/users/services';
 import { Int } from '@nestjs/graphql';
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { DeleteDto } from '../../../common/dtos/delete.dto';
@@ -98,12 +98,12 @@ export class CommandResolver {
   async createExecutiveUser(
     @Args('data') data: CreateUserDto,
     @TokenUser() user: any,
-    ) {
+  ) {
     return await this.nats
       .sendSync(
-        RPCServices.Users, 
-        Users.CreateExecutiveUserCommand, 
-        {data: data, tokenUser: user },
+        RPCServices.Users,
+        Users.CreateExecutiveUserCommand,
+        { data: data, tokenUser: user },
       )
       .catch(e => {
         console.log(e);
@@ -125,12 +125,12 @@ export class CommandResolver {
   async updateExecutiveUser(
     @Args('data') data: UpdateUserDto,
     @TokenUser() user: any,
-    ) {
+  ) {
     return await this.nats
       .sendSync(
-        RPCServices.Users, 
-        Users.UpdateExecutiveUserCommand, 
-        {data: data, tokenUser: user },
+        RPCServices.Users,
+        Users.UpdateExecutiveUserCommand,
+        { data: data, tokenUser: user },
       )
       .catch(e => {
         throw new GraphQLError(e.message);
@@ -142,12 +142,12 @@ export class CommandResolver {
   async updateExecutiveUserStatus(
     @Args('data') data: UpdateExecutiveStatusDto,
     @TokenUser() user: any,
-    ) {
+  ) {
     return await this.nats
       .sendSync(
-        RPCServices.Users, 
-        Users.UpdateExecuticeStatusCommand, 
-        {data: data, tokenUser: user },
+        RPCServices.Users,
+        Users.UpdateExecuticeStatusCommand,
+        { data: data, tokenUser: user },
       )
       .catch(e => {
         throw new GraphQLError(e.message);
@@ -159,17 +159,17 @@ export class CommandResolver {
   async deleteExecutiveUser(
     @Args('data') data: DeleteDto,
     @TokenUser() user: any,
-    ) {
+  ) {
     return await this.nats
       .sendSync(
-        RPCServices.Users, 
-        Users.DeleteExecutiveUserCommand, 
-        {data: data, tokenUser: user }
+        RPCServices.Users,
+        Users.DeleteExecutiveUserCommand,
+        { data: data, tokenUser: user }
       )
       .catch(e => {
         throw new GraphQLError(e.message);
       });
   }
 
-  
+
 }
