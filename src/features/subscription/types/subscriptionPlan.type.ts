@@ -1,28 +1,61 @@
-import { ObjectType, Field } from '@nestjs/graphql';
-import { GraphQLJSONObject } from 'graphql-type-json';
+import { Field, Float, ObjectType } from '@nestjs/graphql';
+
+@ObjectType()
+export class SubscriptionPlanPricingType {
+  @Field(() => [String], { nullable: true })
+  countryCodes?: string[];
+
+  @Field()
+  currency: string;
+
+  @Field(() => Float)
+  monthly: number;
+
+  @Field(() => Float)
+  annual: number;
+
+  @Field(() => Float, { nullable: true })
+  tax?: number;
+}
+
+@ObjectType()
+export class SubscriptionPlanFeatureType {
+  @Field()
+  title: string;
+
+  @Field({ nullable: true })
+  description?: string;
+}
 
 @ObjectType()
 export class SubscriptionPlanType {
+  @Field()
+  id: string;
 
-    @Field()
-    id: string;
+  @Field()
+  fId: string;
 
-    @Field()
-    fId: string;
-  
-    @Field()
-    name: string;
-  
-    @Field({ nullable: true })
-    description: string;
-  
-    @Field()
-    price: number;
+  @Field()
+  name: string;
 
-    @Field({ nullable: true })
-    gst: number;
-  
-    @Field()
-    number_of_coins: number;
+  @Field({ nullable: true })
+  description?: string;
 
+  @Field()
+  type: string;
+
+  @Field({ nullable: true })
+  flag?: string;
+
+  @Field(() => [SubscriptionPlanPricingType])
+  pricing: SubscriptionPlanPricingType[];
+
+  @Field(() => [SubscriptionPlanFeatureType], { nullable: true })
+  features?: SubscriptionPlanFeatureType[];
+
+  @Field({ nullable: true })
+  createdAt?: string;
+
+  @Field({ nullable: true })
+  updatedAt?: string;
 }

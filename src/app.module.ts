@@ -7,7 +7,7 @@ import { CacheModule } from './common/cache/cache.module';
 import { APP_GUARD } from '@nestjs/core';
 import { ACRolesGuard } from './common/access-controll/guards/ac-roles.guard';
 import { GqlAuthGuard } from './common/authentication/guards/gql-auth.guard';
-import { NatsClientModule } from 'selfpod-common/dist/common/rpc-clients/nats/nats-client.module';
+import { NatsClientModule } from 'chatbuk-common/dist/common/rpc-clients/nats/nats-client.module';
 import { UsersModule } from './features/users/users.module';
 import { AuthModule } from './features/auth/auth.module';
 import { ACModule } from './common/access-controll/ac.module';
@@ -16,12 +16,15 @@ import { SubscriptionModule } from './features/subscription/subscription.module'
 import { ContactModule } from './features/webpage/contact.module';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
-import { ChatAppModule } from './features/chat-source-integrations/chatApp.module';
-import { DestinationAppModule } from './features/destination-app-integrations/destinationapp.module';
-import { ParserAppModule } from './features/data-parser-integrations/parserapp.module';
+import { AgentServicesModule } from './features/agent-services/agent-services.module';
+import { HabitTrackingModule } from './features/habitTracking/habitTracking.module';
+import { AgentModule } from './features/user-agents/agent.module';
+import { MediaModule } from './features/media/media.module';
+import { AgentTypeModule } from './features/user-agents/agent-types/agent-type.module';
+import { AgentConnectedAppGraphQLModule } from './features/user-agents/agent-connected-apps/agent-connected-app.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-
+import { DateTimeScalar } from './common/scalars/datetime.scalar';
 
 @Module({
   imports: [
@@ -40,16 +43,22 @@ import { AppService } from './app.service';
     AuditlogModule,
     SubscriptionModule,
     ContactModule,
-    ChatAppModule,
-    DestinationAppModule,
-    ParserAppModule,
+    AgentServicesModule,
+    // DestinationAppModule,
+    // ParserAppModule,
+    HabitTrackingModule,
+    AgentModule,
+    AgentTypeModule,
+    AgentConnectedAppGraphQLModule,
+    MediaModule,
     HttpModule
   ],
   controllers: [
     AppController
   ],
   providers: [
-    AppService
+    AppService,
+    DateTimeScalar
     // {
     //   provide: APP_GUARD,
     //   useClass: GqlAuthGuard

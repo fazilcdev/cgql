@@ -1,5 +1,8 @@
-import { InputType, Field } from '@nestjs/graphql';
-import { GraphQLJSONObject } from 'graphql-type-json';
+import { Field, InputType } from '@nestjs/graphql';
+import {
+  SubscriptionPlanFeatureInput,
+  SubscriptionPlanPricingInput,
+} from './create-subscription-plan.dto';
 
 @InputType()
 export class UpdateSubscriptionPlanDto {
@@ -7,18 +10,23 @@ export class UpdateSubscriptionPlanDto {
   id: string;
 
   @Field()
+  fId: string;
+
+  @Field()
   name: string;
 
   @Field({ nullable: true })
-  description: string;
+  description?: string;
 
   @Field()
-  price: number;
+  type: string;
 
-  @Field()
-  gst: number;
+  @Field({ nullable: true })
+  flag?: string;
 
-  @Field()
-  number_of_coins: number;
+  @Field(() => [SubscriptionPlanPricingInput])
+  pricing: SubscriptionPlanPricingInput[];
 
+  @Field(() => [SubscriptionPlanFeatureInput], { nullable: true })
+  features?: SubscriptionPlanFeatureInput[];
 }

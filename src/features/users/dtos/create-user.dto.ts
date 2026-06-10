@@ -3,19 +3,11 @@ import { GraphQLJSONObject } from 'graphql-type-json';
 
 @InputType()
 export class CreateUserDto {
-  @Field()
-  fId: string;
-
-  @Field(() => String)
-  area: any;
-
-  @Field()
-  gender: string;
 
   @Field()
   firstName: string;
 
-  @Field()
+  @Field({ nullable: true })
   address: string;
 
   @Field()
@@ -24,7 +16,7 @@ export class CreateUserDto {
   @Field()
   email: string;
 
-  @Field()
+  @Field({ nullable: true })
   mobile: string;
 
   @Field()
@@ -32,10 +24,4 @@ export class CreateUserDto {
 
   @Field()
   isActive: boolean;
-
-  // @Field()
-  // image: string;
-
-  // @Field(()=> String)
-  // branch:any;
 }

@@ -1,7 +1,7 @@
 import { Resolver, Mutation, Args } from '@nestjs/graphql';
-import { NatsClientService } from 'selfpod-common/dist/common/rpc-clients/nats/nats-client.module';
-import { RPCServices } from 'selfpod-common/dist/services/rpc-services';
-import { Subscription } from 'selfpod-common/dist/services/subscription/services';
+import { NatsClientService } from 'chatbuk-common/dist/common/rpc-clients/nats/nats-client.module';
+import { RPCServices } from 'chatbuk-common/dist/services/rpc-services';
+import { Subscription } from 'chatbuk-common/dist/services/subscription/services';
 import { Int } from '@nestjs/graphql';
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { DeleteDto } from '../../../common/dtos/delete.dto';
