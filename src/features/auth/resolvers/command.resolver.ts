@@ -1,8 +1,11 @@
 import { Resolver, Mutation, Args } from '@nestjs/graphql';
+import { UseGuards } from '@nestjs/common';
 import { NatsClientService } from 'chatbuk-common/dist/common/rpc-clients/nats/nats-client.module';
 import { RPCServices } from 'chatbuk-common/dist/services/rpc-services';
 import { Auth } from 'chatbuk-common/dist/services/auth/services';
 import { Int } from '@nestjs/graphql';
+import { GqlAuthGuard } from '../../../common/authentication/guards/gql-auth.guard';
+import { TokenUser } from '../../../common/authentication/decorators/tokenUser.decorator';
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { DeleteDto } from '../../../common/dtos/delete.dto';
 import { GraphQLError } from 'graphql';
@@ -159,5 +162,34 @@ export class CommandResolver {
       .catch(e => {
         throw new GraphQLError(e.message);
       });
+  }
+
+  // -------------------------  Two-Factor Auth (authenticated) ------------------------------ //
+
+  // Begin enrollment for the logged-in user — returns { secret, otpauthUrl } for QR rendering.
+  @UseGuards(GqlAuthGuard)
+  @Mutation(returns => GraphQLJSONObject)
+  async enroll2fa(@TokenUser() user: any) {
+    return await this.nats
+      .sendSync(RPCServices.Auth, Auth.Enroll2faCommand, { userId: user?.id || user?._id })
+      .catch(e => { throw new GraphQLError(e.message); });
+  }
+
+  // Confirm enrollment with a TOTP code — enables 2FA and returns one-time backup codes.
+  @UseGuards(GqlAuthGuard)
+  @Mutation(returns => GraphQLJSONObject)
+  async verify2faSetup(@Args('code') code: string, @TokenUser() user: any) {
+    return await this.nats
+      .sendSync(RPCServices.Auth, Auth.Verify2faSetupCommand, { userId: user?.id || user?._id, code })
+      .catch(e => { throw new GraphQLError(e.message); });
+  }
+
+  // Disable 2FA — requires a currently-valid TOTP or backup code.
+  @UseGuards(GqlAuthGuard)
+  @Mutation(returns => GraphQLJSONObject)
+  async disable2fa(@Args('code') code: string, @TokenUser() user: any) {
+    return await this.nats
+      .sendSync(RPCServices.Auth, Auth.Disable2faCommand, { userId: user?.id || user?._id, code })
+      .catch(e => { throw new GraphQLError(e.message); });
   }
 }

@@ -26,4 +26,15 @@ export class AppController {
         throw new GraphQLError(e.message)
       });
   }
+
+  // Second step of a 2FA login: exchange the short-lived challenge token + TOTP code
+  // (returned by verify-google-login when requires2fa is true) for a real access token.
+  @Post('verify-2fa-login')
+  async verify2faLogin(@Body() data: any) {
+    return await this.nats
+      .sendSync(RPCServices.Auth, Auth.Verify2faLoginCommand, data)
+      .catch(e => {
+        throw new GraphQLError(e.message)
+      });
+  }
 }
