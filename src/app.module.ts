@@ -37,6 +37,7 @@ import { DateTimeScalar } from './common/scalars/datetime.scalar';
       autoSchemaFile: join(__dirname, 'schema.gql'),
       context: ({ req }) => ({ req }),
       playground: true,
+      useGlobalPrefix: true,
     }),
     UsersModule,
     AuthModule,
