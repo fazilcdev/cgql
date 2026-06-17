@@ -1,4 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
+import { GraphQLJSONObject } from 'graphql-type-json';
 import {
   SubscriptionPlanFeatureInput,
   SubscriptionPlanPricingInput,
@@ -29,4 +30,8 @@ export class UpdateSubscriptionPlanDto {
 
   @Field(() => [SubscriptionPlanFeatureInput], { nullable: true })
   features?: SubscriptionPlanFeatureInput[];
+
+  /** Admin-picked feature VALUES enforced by the entitlement engine: { limits, flags }. */
+  @Field(() => GraphQLJSONObject, { nullable: true })
+  entitlements?: Record<string, any>;
 }

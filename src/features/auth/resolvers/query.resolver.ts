@@ -104,6 +104,21 @@ export class QueryResolver {
       });
   }
 
+  // Total users matching the same condition — drives admin pagination.
+  @Query(returns => String, { nullable: true })
+  async getAuthUsersCount(
+    @Args({ name: 'condition', nullable: true, type: () => GraphQLJSONObject })
+    condition: any,
+  ) {
+    return await this.nats
+      .sendSync(RPCServices.Auth, Auth.GetAuthUsersCount, {
+        condition: condition,
+      })
+      .catch(e => {
+        throw new GraphQLError(e.message);
+      });
+  }
+
   // -------------------------  AccessToken ------------------------------------------ //
 
   @Query(returns => AccessTokenType)

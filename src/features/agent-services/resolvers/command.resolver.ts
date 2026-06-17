@@ -27,6 +27,7 @@ export class CommandResolver {
   // -------------------------  Mcp App ------------------------------------------ //
 
   //@ACRoles(['Admin', 'SuperAdmin'])
+  @UseGuards(GqlAuthGuard)
   @Mutation(returns => McpAppType)
   async createMcpApp(
     @Args('data') data: CreateMcpAppDto,
@@ -44,6 +45,7 @@ export class CommandResolver {
       });
   }
 
+  @UseGuards(GqlAuthGuard)
   @Mutation(returns => McpAppType)
   async updateMcpApp(
     @Args('data') data: UpdateMcpAppDto,
@@ -61,6 +63,7 @@ export class CommandResolver {
       });
   }
 
+  @UseGuards(GqlAuthGuard)
   @Mutation(returns => McpAppType)
   async deleteMcpApp(
     @Args('data') data: DeleteDto,
@@ -102,6 +105,7 @@ export class CommandResolver {
       });
   }
 
+  @UseGuards(GqlAuthGuard)
   @Mutation(returns => Boolean)
   async deleteTransaction(
     @Args('id') id: string,

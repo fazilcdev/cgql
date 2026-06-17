@@ -14,6 +14,8 @@ import { ACModule } from './common/access-controll/ac.module';
 import { AuditlogModule } from './features/auditlog/auditlog.module';
 import { SubscriptionModule } from './features/subscription/subscription.module';
 import { ContactModule } from './features/webpage/contact.module';
+import { FeedbackModule } from './features/feedback/feedback.module';
+import { InviteModule } from './features/invite/invite.module';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { AgentServicesModule } from './features/agent-services/agent-services.module';
@@ -44,6 +46,8 @@ import { DateTimeScalar } from './common/scalars/datetime.scalar';
     AuditlogModule,
     SubscriptionModule,
     ContactModule,
+    FeedbackModule,
+    InviteModule,
     AgentServicesModule,
     // DestinationAppModule,
     // ParserAppModule,

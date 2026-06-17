@@ -1,5 +1,5 @@
 import { ObjectType, Field } from '@nestjs/graphql';
-import { GraphQLJSONObject } from 'graphql-type-json';
+import { GraphQLJSON, GraphQLJSONObject } from 'graphql-type-json';
 
 @ObjectType('Agent')
 export class Agent {
@@ -33,6 +33,9 @@ export class Agent {
 
     @Field(() => GraphQLJSONObject, { nullable: true })
     additionalInfo: any;
+
+    @Field(() => GraphQLJSON, { nullable: true })
+    subChats?: any;
 
     @Field()
     interactiveMode: string;

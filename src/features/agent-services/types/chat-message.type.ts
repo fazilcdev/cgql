@@ -62,6 +62,9 @@ export class ChatMessageType {
     @Field({ nullable: true })
     authUser?: string;
 
+    @Field(() => GraphQLJSONObject, { nullable: true })
+    sender?: any;
+
     @Field({ nullable: true })
     createdAt?: Date;
 }

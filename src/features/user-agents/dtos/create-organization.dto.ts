@@ -2,8 +2,9 @@ import { InputType, Field } from '@nestjs/graphql';
 
 @InputType()
 export class CreateOrganizationDto {
-    @Field()
-    ownerId: string;
+    // The owner is taken from the authenticated token server-side; clients don't supply it.
+    @Field({ nullable: true })
+    ownerId?: string;
 
     @Field()
     name: string;

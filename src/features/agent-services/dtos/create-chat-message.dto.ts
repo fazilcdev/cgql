@@ -31,4 +31,10 @@ export class CreateChatMessageDto {
 
     @Field({ nullable: true })
     tempId?: string;
+
+    @Field({ nullable: true })
+    workspaceId?: string;
+
+    @Field({ nullable: true })
+    chatId?: string;
 }

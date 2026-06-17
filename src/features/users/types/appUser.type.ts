@@ -13,6 +13,15 @@ export class AppUserType {
   @Field(() => AuthUserType)
   authUser: any;
 
+  @Field({ nullable: true })
+  firstName: string;
+
+  @Field({ nullable: true })
+  lastName: string;
+
+  @Field({ nullable: true })
+  email: string;
+
   @Field()
   createdAt: string;
 

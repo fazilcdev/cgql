@@ -1,4 +1,5 @@
-import { Field, Float, ObjectType } from '@nestjs/graphql';
+import { Field, Float, Int, ObjectType } from '@nestjs/graphql';
+import { GraphQLJSONObject } from 'graphql-type-json';
 
 @ObjectType()
 export class SubscriptionPlanPricingType {
@@ -52,6 +53,18 @@ export class SubscriptionPlanType {
 
   @Field(() => [SubscriptionPlanFeatureType], { nullable: true })
   features?: SubscriptionPlanFeatureType[];
+
+  @Field(() => GraphQLJSONObject, { nullable: true })
+  entitlements?: any;
+
+  @Field({ nullable: true })
+  isDefault?: boolean;
+
+  @Field({ nullable: true })
+  isSignupDefault?: boolean;
+
+  @Field(() => Int, { nullable: true })
+  defaultDurationDays?: number;
 
   @Field({ nullable: true })
   createdAt?: string;

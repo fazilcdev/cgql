@@ -126,7 +126,6 @@ export class CommandResolver {
 
   @Mutation(returns => LoginType, { nullable: true })
   async login(@Args('data') data: PasswordGrantDto) {
-    console.log('.............', data)
     return await this.nats
       .sendSync(RPCServices.Auth, Auth.LoginCommand, data)
       .catch(e => {

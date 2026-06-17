@@ -113,6 +113,16 @@ export class QueryResolver {
       if (msg.createdAt) {
         msg.createdAt = new Date(msg.createdAt);
       }
+      const authUser = msg.authUser;
+      if (authUser && typeof authUser === 'object') {
+        msg.sender = {
+          id: String(authUser._id || authUser.id || ''),
+          name: [authUser.firstName, authUser.lastName].filter(Boolean).join(' ') || authUser.email,
+          email: authUser.email,
+          avatar: authUser.picture,
+        };
+        msg.authUser = String(authUser._id || authUser.id || '');
+      }
       msg.inputs = this.normalizeJsonObject(msg.inputs);
       msg.result = this.normalizeJsonObject(msg.result);
       msg.rich = this.normalizeJsonObject(msg.rich);

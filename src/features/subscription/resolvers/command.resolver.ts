@@ -1,4 +1,5 @@
 import { Resolver, Mutation, Args } from '@nestjs/graphql';
+import { UseGuards } from '@nestjs/common';
 import { NatsClientService } from 'chatbuk-common/dist/common/rpc-clients/nats/nats-client.module';
 import { RPCServices } from 'chatbuk-common/dist/services/rpc-services';
 import { Subscription } from 'chatbuk-common/dist/services/subscription/services';
@@ -13,8 +14,13 @@ import { UpdateSubscriptionPlanDto } from '../dtos/update-subscription-plan.dto'
 import { SubscriptionPlanType } from '../types/subscriptionPlan.type';
 
 import { ACRoles } from '../../../common/access-controll/decorators/ac-roles.decorator';
+import { ACRolesGuard } from '../../../common/access-controll/guards/ac-roles.guard';
+import { GqlAuthGuard } from '../../../common/authentication/guards/gql-auth.guard';
 import { TokenUser } from '../../../common/authentication/decorators/tokenUser.decorator';
 
+// Plan CRUD is admin-only (Admin / Super Admin). Public reads use the unauthenticated query resolver.
+@UseGuards(GqlAuthGuard, ACRolesGuard)
+@ACRoles(['Admin', 'Super Admin'])
 @Resolver()
 export class CommandResolver {
   constructor(private readonly nats: NatsClientService) { }
@@ -23,7 +29,6 @@ export class CommandResolver {
 
   // -------------------------  Subscription plan ------------------------------------------ //
 
-  //@ACRoles(['Admin', 'SuperAdmin'])
   @Mutation(returns => SubscriptionPlanType)
   async createSubscriptionPlan(
     @Args('data') data: CreateSubscriptionPlanDto,

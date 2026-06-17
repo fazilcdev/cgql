@@ -1,14 +1,18 @@
 import { Resolver, Args, Query } from '@nestjs/graphql';
 import { Int } from '@nestjs/graphql';
 import { GraphQLJSONObject } from 'graphql-type-json';
+import { UseGuards } from '@nestjs/common';
 import { NatsClientService } from 'chatbuk-common/dist/common/rpc-clients/nats/nats-client.module';
 import { GqlFieldsMap } from 'chatbuk-common/dist/common/decorators/gql-fields-map.decorator';
 import { GqlProjection } from 'chatbuk-common/dist/common/decorators/gql-projection.decorator';
 import { RPCServices } from 'chatbuk-common/dist/services/rpc-services';
 import { UserAgents } from 'chatbuk-common/dist/services/user-agents/services';
+import { Chat, Membership } from 'chatbuk-common/dist/services/agent-service/entities';
 import { GraphQLError } from 'graphql';
 import { Agent } from '../types/agent.type';
 import { Organization } from '../types/organization.type';
+import { GqlAuthGuard } from '../../../common/authentication/guards/gql-auth.guard';
+import { TokenUser } from '../../../common/authentication/decorators/tokenUser.decorator';
 
 @Resolver()
 export class QueryResolver {
@@ -56,6 +60,7 @@ export class QueryResolver {
     }
 
     @Query(returns => [Agent])
+    @UseGuards(GqlAuthGuard)
     async getManyAgents(
         @GqlFieldsMap() fieldsMap: any,
         @GqlProjection() projection,
@@ -64,13 +69,33 @@ export class QueryResolver {
         @Args({ name: 'sort', nullable: true, type: () => String }) sort: string,
         @Args({ name: 'condition', nullable: true, type: () => GraphQLJSONObject })
         condition: any,
+        @TokenUser() user: any,
     ) {
+        const userId = String(user?.id || user?._id || condition?.authUser || '');
+        const activeWorkspaceIds = userId
+            ? await this.nats
+                .sendSync(RPCServices.AgentService, Membership.ListActiveWorkspacesQuery, {
+                    data: {},
+                    tokenUser: { id: userId },
+                })
+                .catch(() => [])
+            : [];
+        const scopedCondition = { ...(condition || {}) };
+        delete scopedCondition.authUser;
+        if (userId) {
+            scopedCondition.$or = [
+                { authUser: userId },
+                ...(activeWorkspaceIds.length
+                    ? [{ additionalInfo__groupWorkspaceId: { ___in: activeWorkspaceIds } }]
+                    : []),
+            ];
+        }
         const agents = await this.nats
             .sendSync(RPCServices.UserAgents, UserAgents.GetManyAgentsQuery, {
                 limit: limit,
                 skip: skip,
                 sort: sort,
-                condition: condition,
+                condition: scopedCondition,
                 fieldsMap: fieldsMap,
             })
             .catch(e => {
@@ -78,12 +103,27 @@ export class QueryResolver {
                 throw new GraphQLError(e.message);
             });
 
-        return agents.map(agent => {
+        const agentsWithDates = agents.map(agent => {
             if (agent.createdAt) agent.createdAt = new Date(agent.createdAt);
             if (agent.updatedAt) agent.updatedAt = new Date(agent.updatedAt);
             if (agent.lastActive) agent.lastActive = new Date(agent.lastActive);
             return agent;
         });
+        await Promise.all(agentsWithDates.map(async (agent: any) => {
+            const workspaceId = agent?.additionalInfo?.groupWorkspaceId;
+            if (!workspaceId) return;
+            const tree = await this.nats
+                .sendSync(RPCServices.AgentService, Chat.GetChatTreeQuery, {
+                    data: { workspaceId },
+                    tokenUser: { id: userId },
+                })
+                .catch(() => []);
+            agent.subChats = Array.isArray(tree)
+                ? tree.filter((node: any) => node?.type === 'sub' || Boolean(node?.parentChatId))
+                : [];
+        }));
+
+        return agentsWithDates;
     }
 
     @Query(returns => [Organization])

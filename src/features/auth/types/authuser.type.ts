@@ -18,7 +18,7 @@ export class AuthUserType {
   @Field({nullable:true})
   email: string;
 
-  @Field()
+  @Field({ nullable: true })
   mobile: string;
 
   @Field()
@@ -26,4 +26,7 @@ export class AuthUserType {
 
   @Field(() => [String], { nullable: true })
   roles: Array<any>;
+
+  @Field({ nullable: true })
+  createdAt: Date;
 }

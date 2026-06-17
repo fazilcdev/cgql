@@ -18,4 +18,7 @@ export class GetManyChatMessagesQueryDto {
 
     @Field(() => GraphQLJSONObject, { nullable: true })
     fieldsMap?: any;
+
+    @Field({ nullable: true })
+    workspaceId?: string;
 }
