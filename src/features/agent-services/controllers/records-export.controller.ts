@@ -75,10 +75,22 @@ export class RecordsExportController {
               count: totals.count ?? records.length,
               expenseAmount: totals.expenseAmount,
               incomeAmount: totals.incomeAmount,
+              operatingExpenseAmount: totals.operatingExpenseAmount,
+              operatingIncomeAmount: totals.operatingIncomeAmount,
+              investmentAmount: totals.investmentAmount,
               netAmount: totals.netAmount,
               amount: totals.amount,
             },
           ];
+    // Operating spending/income (investments pulled out) — fall back to gross for older payloads.
+    const operatingExpense = (b: any) =>
+      b.operatingExpenseAmount ?? b.expenseAmount;
+    const operatingIncome = (b: any) =>
+      b.operatingIncomeAmount ?? b.incomeAmount;
+    // Only show the Investments column when some currency actually has investment activity.
+    const hasInvestments = byCurrency.some(
+      (b: any) => Math.round(Number(b.investmentAmount || 0)) !== 0,
+    );
     const isOutlier = (cur?: string) =>
       String(cur || '').toUpperCase() !== String(primaryCurrency).toUpperCase();
     // Amber fill used to flag any non-primary ("outlier") currency cell/row.
@@ -96,8 +108,11 @@ export class RecordsExportController {
     summary.columns = [
       { header: 'Currency', key: 'currency', width: 12 },
       { header: 'Entries', key: 'count', width: 10 },
-      { header: 'Spending', key: 'expense', width: 16 },
       { header: 'Income', key: 'income', width: 16 },
+      { header: 'Spending', key: 'expense', width: 16 },
+      ...(hasInvestments
+        ? [{ header: 'Investments', key: 'investment', width: 16 }]
+        : []),
       { header: 'Net', key: 'net', width: 16 },
     ];
     summary.getRow(1).font = { bold: true };
@@ -108,8 +123,11 @@ export class RecordsExportController {
       const row = summary.addRow({
         currency: b.currency + (isOutlier(b.currency) ? '  (outlier)' : ''),
         count: b.count ?? '',
-        expense: numOrBlank(b.expenseAmount),
-        income: numOrBlank(b.incomeAmount),
+        income: numOrBlank(operatingIncome(b)),
+        expense: numOrBlank(operatingExpense(b)),
+        ...(hasInvestments
+          ? { investment: numOrBlank(b.investmentAmount) }
+          : {}),
         net: numOrBlank(b.netAmount ?? b.amount),
       });
       if (isOutlier(b.currency)) row.eachCell((cell) => (cell.fill = OUTLIER_FILL));
@@ -120,8 +138,9 @@ export class RecordsExportController {
       const row = summary.addRow({
         currency: `≈ ${c.currency} (converted)`,
         count: '',
-        expense: numOrBlank(c.expenseAmount),
-        income: numOrBlank(c.incomeAmount),
+        income: numOrBlank(operatingIncome(c)),
+        expense: numOrBlank(operatingExpense(c)),
+        ...(hasInvestments ? { investment: numOrBlank(c.investmentAmount) } : {}),
         net: numOrBlank(c.netAmount),
       });
       row.font = { italic: true };
