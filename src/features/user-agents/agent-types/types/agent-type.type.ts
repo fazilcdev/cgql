@@ -15,6 +15,9 @@ export class AgentType {
     @Field({ nullable: true })
     icon: string;
 
+    @Field({ nullable: true })
+    image: string;
+
     @Field(() => GraphQLJSONObject, { nullable: true })
     defaultConfig: any;
 

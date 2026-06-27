@@ -26,6 +26,11 @@ export class CreateAgentDto {
     @Field(() => GraphQLJSONObject, { nullable: true })
     additionalInfo?: any;
 
+    /** Optional business context (mode/industry/businessName/notes). Normalized + stored under
+     *  additionalInfo.businessProfile by the create handler. Not gated by any plan/org. */
+    @Field(() => GraphQLJSONObject, { nullable: true })
+    businessProfile?: any;
+
     @Field({ defaultValue: 'enabled' })
     interactiveMode: string;
 

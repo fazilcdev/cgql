@@ -2,7 +2,7 @@ import { Resolver, Mutation, Args } from '@nestjs/graphql';
 import { NatsClientService } from 'chatbuk-common/dist/common/rpc-clients/nats/nats-client.module';
 import { RPCServices } from 'chatbuk-common/dist/services/rpc-services';
 import { Users } from 'chatbuk-common/dist/services/users/services';
-import { GraphQLError } from 'graphql';
+import { toGraphQLError } from '../../../common/errors/to-graphql-error';
 import { SendFeedbackDto } from '../dtos/send-feedback.dto';
 
 @Resolver()
@@ -15,7 +15,7 @@ export class CommandResolver {
     const res: any = await this.nats
       .sendSync(RPCServices.Users, Users.SendFeedbackCommand, data)
       .catch((e) => {
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
     return Boolean(res?.ok ?? res);
   }

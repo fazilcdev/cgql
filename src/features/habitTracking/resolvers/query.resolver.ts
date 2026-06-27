@@ -2,7 +2,7 @@ import { Resolver, Query, Args, Int } from '@nestjs/graphql';
 import { NatsClientService } from 'chatbuk-common/dist/common/rpc-clients/nats/nats-client.module';
 import { RPCServices } from 'chatbuk-common/dist/services/rpc-services';
 import { HabitTracking } from 'chatbuk-common/dist/services/habit-tracking/services';
-import { GraphQLError } from 'graphql';
+import { toGraphQLError } from '../../../common/errors/to-graphql-error';
 import { HabitType } from '../types/habit.type';
 import { EntryType } from '../types/entry.type';
 import { GraphQLJSON, GraphQLJSONObject } from 'graphql-type-json';
@@ -16,7 +16,7 @@ export class HabitTrackingQueryResolver {
         return await this.nats
             .sendSync(RPCServices.HabitTracking, HabitTracking.GetOneHabitQuery, { condition })
             .catch(e => {
-                throw new GraphQLError(e.message);
+                throw toGraphQLError(e);
             });
     }
 
@@ -30,7 +30,7 @@ export class HabitTrackingQueryResolver {
         return await this.nats
             .sendSync(RPCServices.HabitTracking, HabitTracking.GetManyHabitsQuery, { condition, limit, skip, sort })
             .catch(e => {
-                throw new GraphQLError(e.message);
+                throw toGraphQLError(e);
             });
     }
 
@@ -39,7 +39,7 @@ export class HabitTrackingQueryResolver {
         return await this.nats
             .sendSync(RPCServices.HabitTracking, HabitTracking.GetHabitsCountQuery, { condition })
             .catch(e => {
-                throw new GraphQLError(e.message);
+                throw toGraphQLError(e);
             });
     }
 
@@ -48,7 +48,7 @@ export class HabitTrackingQueryResolver {
         return await this.nats
             .sendSync(RPCServices.HabitTracking, HabitTracking.GetOneEntryQuery, { condition })
             .catch(e => {
-                throw new GraphQLError(e.message);
+                throw toGraphQLError(e);
             });
     }
 
@@ -62,7 +62,7 @@ export class HabitTrackingQueryResolver {
         return await this.nats
             .sendSync(RPCServices.HabitTracking, HabitTracking.GetManyEntriesQuery, { condition, limit, skip, sort })
             .catch(e => {
-                throw new GraphQLError(e.message);
+                throw toGraphQLError(e);
             });
     }
 
@@ -71,7 +71,7 @@ export class HabitTrackingQueryResolver {
         return await this.nats
             .sendSync(RPCServices.HabitTracking, HabitTracking.GetEntriesCountQuery, { condition })
             .catch(e => {
-                throw new GraphQLError(e.message);
+                throw toGraphQLError(e);
             });
     }
 }

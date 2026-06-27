@@ -4,7 +4,7 @@ import { GqlAuthGuard } from '../../../common/authentication/guards/gql-auth.gua
 import { NatsClientService } from 'chatbuk-common/dist/common/rpc-clients/nats/nats-client.module';
 import { RPCServices } from 'chatbuk-common/dist/services/rpc-services';
 import { UserAgents } from 'chatbuk-common/dist/services/user-agents/services';
-import { GraphQLError } from 'graphql';
+import { toGraphQLError } from '../../../common/errors/to-graphql-error';
 import { Agent } from '../types/agent.type';
 import { CreateAgentDto } from '../dtos/create-agent.dto';
 import { UpdateAgentDto } from '../dtos/update-agent.dto';
@@ -29,7 +29,7 @@ export class CommandResolver {
             })
             .catch(e => {
                 console.error('CreateAgent error:', e);
-                throw new GraphQLError(e.message || JSON.stringify(e));
+                throw toGraphQLError(e);
             });
 
         if (agent) {
@@ -54,7 +54,7 @@ export class CommandResolver {
                 tokenUser: user,
             })
             .catch(e => {
-                throw new GraphQLError(e.message);
+                throw toGraphQLError(e);
             });
 
         if (agent) {
@@ -77,7 +77,7 @@ export class CommandResolver {
                 tokenUser: user,
             })
             .catch(e => {
-                throw new GraphQLError(e.message);
+                throw toGraphQLError(e);
             });
     }
 
@@ -96,10 +96,13 @@ export class CommandResolver {
                 tokenUser: user,
             })
             .catch(e => {
-                throw new GraphQLError(e.message);
+                throw toGraphQLError(e);
             });
 
         if (org) {
+            // SchemaPlus.toJSON renames _id -> id during NATS serialization,
+            // but the Organization GraphQL type requires a non-nullable _id.
+            if (!org._id && org.id) org._id = org.id;
             org.createdAt = new Date(org.createdAt);
             org.updatedAt = new Date(org.updatedAt);
         }

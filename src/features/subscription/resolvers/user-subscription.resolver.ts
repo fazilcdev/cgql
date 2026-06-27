@@ -1,14 +1,15 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { GraphQLJSON, GraphQLJSONObject } from 'graphql-type-json';
-import { GraphQLError } from 'graphql';
 import { NatsClientService } from 'chatbuk-common/dist/common/rpc-clients/nats/nats-client.module';
 import { RPCServices } from 'chatbuk-common/dist/services/rpc-services';
 import { Subscription } from 'chatbuk-common/dist/services/subscription/services';
 import { GqlAuthGuard } from '../../../common/authentication/guards/gql-auth.guard';
 import { ACRolesGuard } from '../../../common/access-controll/guards/ac-roles.guard';
 import { ACRoles } from '../../../common/access-controll/decorators/ac-roles.decorator';
+import { Roles } from '../../../common/access-controll/init';
 import { TokenUser } from '../../../common/authentication/decorators/tokenUser.decorator';
+import { toGraphQLError } from '../../../common/errors/to-graphql-error';
 
 /**
  * User-subscription + ledger API. Admin operations are role-gated (Admin / Super Admin); the
@@ -23,7 +24,7 @@ export class UserSubscriptionResolver {
     return this.nats
       .sendSync(RPCServices.Subscription, cmd, payload)
       .catch((e) => {
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 
@@ -103,14 +104,27 @@ export class UserSubscriptionResolver {
     return this.call(Subscription.AssignUserSubscriptionCommand, { data, tokenUser: user });
   }
 
-  @UseGuards(GqlAuthGuard, ACRolesGuard)
-  @ACRoles(['Admin', 'Super Admin'])
+  // ---- User self-cancel + Admin cancel -----------------------------------
+  // Authenticated only (no role gate): a normal user may cancel *their own* active subscription;
+  // an Admin / Super Admin may target any subscription (by id / authUser / org). For non-admins we
+  // strip all targeting and force the filter to their own token id, so a regular user can never
+  // cancel someone else's plan. `note` is the optional cancellation reason (stored on the row + ledger).
+  @UseGuards(GqlAuthGuard)
   @Mutation(() => GraphQLJSONObject, { nullable: true })
   async cancelUserSubscription(
     @Args({ name: 'data', type: () => GraphQLJSONObject }) data: any,
     @TokenUser() user: any,
   ) {
-    return this.call(Subscription.CancelUserSubscriptionCommand, { data, tokenUser: user });
+    const roles: string[] = user?.roles || [];
+    const isAdmin = roles.includes(Roles.Admin) || roles.includes(Roles.SuperAdmin);
+    const safeData = isAdmin
+      ? data
+      : {
+          authUser: String(user?.id || user?._id),
+          immediate: data?.immediate ?? false,
+          note: data?.note,
+        };
+    return this.call(Subscription.CancelUserSubscriptionCommand, { data: safeData, tokenUser: user });
   }
 
   @UseGuards(GqlAuthGuard, ACRolesGuard)

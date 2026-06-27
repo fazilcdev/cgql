@@ -7,7 +7,7 @@ import { GqlProjection } from 'chatbuk-common/dist/common/decorators/gql-project
 import { RPCServices } from 'chatbuk-common/dist/services/rpc-services';
 import { Subscription } from 'chatbuk-common/dist/services/subscription/services';
 import { TokenUser } from '../../../common/authentication/decorators/tokenUser.decorator';
-import { GraphQLError } from 'graphql';
+import { toGraphQLError } from '../../../common/errors/to-graphql-error';
 
 import { SubscriptionPlanType } from '../types/subscriptionPlan.type';
 
@@ -31,7 +31,7 @@ export class QueryResolver {
         fieldsMap: fieldsMap,
       })
       .catch(e => {
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 
@@ -48,7 +48,7 @@ export class QueryResolver {
         fieldsMap: fieldsMap,
       })
       .catch(e => {
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 
@@ -71,7 +71,7 @@ export class QueryResolver {
         fieldsMap: fieldsMap,
       })
       .catch(e => {
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 

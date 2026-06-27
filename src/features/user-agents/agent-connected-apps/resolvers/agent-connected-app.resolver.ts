@@ -4,6 +4,7 @@ import { RPCServices } from 'chatbuk-common/dist/services/rpc-services';
 import { UserAgents } from 'chatbuk-common/dist/services/user-agents/services';
 import { AgentConnectedApp } from '../types/agent-connected-app.type';
 import { ConnectAppDto } from '../dtos/connect-app.dto';
+import { UpdateAppConfigDto } from '../dtos/update-app-config.dto';
 
 @Resolver(() => AgentConnectedApp)
 export class AgentConnectedAppResolver {
@@ -17,6 +18,11 @@ export class AgentConnectedAppResolver {
     @Mutation(() => AgentConnectedApp)
     async disconnectAppFromAgent(@Args('id') id: string) {
         return this.nats.sendSync(RPCServices.UserAgents, UserAgents.DisconnectAppCommand, { id });
+    }
+
+    @Mutation(() => AgentConnectedApp)
+    async updateAppConfig(@Args('data') data: UpdateAppConfigDto) {
+        return this.nats.sendSync(RPCServices.UserAgents, UserAgents.UpdateAppConfigCommand, data);
     }
 
     @Query(() => [AgentConnectedApp])

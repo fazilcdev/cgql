@@ -5,7 +5,7 @@ import { WebPage } from 'chatbuk-common/dist/services/webpage/services';
 import { Int } from '@nestjs/graphql';
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { DeleteDto } from '../../../common/dtos/delete.dto';
-import { GraphQLError } from 'graphql';
+import { toGraphQLError } from '../../../common/errors/to-graphql-error';
 import { ContactPageType } from '../types/contactPage.type';
 import { CreateContactPageDto } from '../dtos/create-contactPage.dto'
 import { AppVersionType } from '../types/appVersion.type';
@@ -26,7 +26,7 @@ export class CommandResolver {
     return await this.nats
       .sendSync(RPCServices.WebPage, WebPage.CreateWebPageCommand, data)
       .catch(e => {
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 

@@ -1,4 +1,5 @@
 import { Resolver, Args, Query } from "@nestjs/graphql";
+import { toGraphQLError } from '../../../common/errors/to-graphql-error';
 import { Int } from "@nestjs/graphql";
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { NatsClientService } from "chatbuk-common/dist/common/rpc-clients/nats/nats-client.module";
@@ -6,7 +7,6 @@ import { GqlFieldsMap } from "chatbuk-common/dist/common/decorators/gql-fields-m
 import { GqlProjection } from "chatbuk-common/dist/common/decorators/gql-projection.decorator";
 import { RPCServices } from "chatbuk-common/dist/services/rpc-services";
 import { Auditlog } from "chatbuk-common/dist/services/auditlog/services";
-import { GraphQLError } from 'graphql';
 import { UserLogType } from "../types/userLog.type";
 
 @Resolver()
@@ -29,7 +29,7 @@ export class QueryResolver {
     return await this.nats.sendSync(RPCServices.Auditlog, Auditlog.GetOneUserLogQuery, {
       condition: condition,
       fieldsMap: fieldsMap
-    }).catch((e) => { throw new GraphQLError(e) });
+    }).catch((e) => { throw toGraphQLError(e) });
   }
 
   @Query(returns => [UserLogType])
@@ -47,7 +47,7 @@ export class QueryResolver {
       sort: sort,
       condition: condition,
       fieldsMap: fieldsMap
-    }).catch((e) => { throw new GraphQLError(e) });
+    }).catch((e) => { throw toGraphQLError(e) });
   }
 
   @Query(returns => String, { nullable: true })
@@ -59,7 +59,7 @@ export class QueryResolver {
     return await this.nats.sendSync(RPCServices.Auditlog, Auditlog.GetUserLogCountQuery, {
       condition: condition,
       fieldsMap: fieldsMap
-    }).catch((e) => { throw new GraphQLError(e) });
+    }).catch((e) => { throw toGraphQLError(e) });
   }
 
 }

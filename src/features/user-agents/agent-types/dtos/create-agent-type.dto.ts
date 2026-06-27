@@ -12,6 +12,9 @@ export class CreateAgentTypeDto {
     @Field({ nullable: true })
     icon?: string;
 
+    @Field({ nullable: true })
+    image?: string;
+
     @Field(() => GraphQLJSONObject, { nullable: true })
     defaultConfig?: any;
 

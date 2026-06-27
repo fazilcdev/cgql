@@ -1,7 +1,7 @@
 import { Resolver, Query, Args, Int } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { GraphQLJSON, GraphQLJSONObject } from 'graphql-type-json';
-import { GraphQLError } from 'graphql';
+import { toGraphQLError } from '../../../common/errors/to-graphql-error';
 import { NatsClientService } from 'chatbuk-common/dist/common/rpc-clients/nats/nats-client.module';
 import { RPCServices } from 'chatbuk-common/dist/services/rpc-services';
 import { SystemLogs } from 'chatbuk-common/dist/services/agent-service/entities';
@@ -22,7 +22,7 @@ export class SystemLogResolver {
     return this.nats
       .sendSync(RPCServices.AgentService, cmd, payload)
       .catch((e) => {
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 

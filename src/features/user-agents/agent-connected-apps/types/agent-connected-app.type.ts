@@ -25,6 +25,12 @@ export class AgentConnectedApp {
     status: string;
 
     @Field({ nullable: true })
+    inheritedFrom: string;
+
+    @Field({ nullable: true })
+    inheritedAt: Date;
+
+    @Field({ nullable: true })
     createdAt: Date;
 
     @Field({ nullable: true })

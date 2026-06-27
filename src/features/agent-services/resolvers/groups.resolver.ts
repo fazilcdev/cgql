@@ -1,7 +1,7 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { GraphQLJSON, GraphQLJSONObject } from 'graphql-type-json';
-import { GraphQLError } from 'graphql';
+import { toGraphQLError } from '../../../common/errors/to-graphql-error';
 import { NatsClientService } from 'chatbuk-common/dist/common/rpc-clients/nats/nats-client.module';
 import { RPCServices } from 'chatbuk-common/dist/services/rpc-services';
 import {
@@ -31,7 +31,7 @@ export class GroupsResolver {
     return this.nats
       .sendSync(RPCServices.AgentService, cmd, { data, tokenUser: user })
       .catch((e) => {
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 
@@ -39,7 +39,7 @@ export class GroupsResolver {
     return this.nats
       .sendSync(RPCServices.UserAgents, cmd, { ...data, data, tokenUser: user })
       .catch((e) => {
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 
@@ -89,6 +89,15 @@ export class GroupsResolver {
     @Args({ name: 'data', type: () => GraphQLJSONObject }) data: any,
   ) {
     return this.callUserAgents(UserAgents.RemoveOrgMemberCommand, data, user);
+  }
+
+  /** Delete an organization (owner/admin). Cascade-removes members → revokes their access. */
+  @Mutation(() => GraphQLJSONObject, { nullable: true })
+  async deleteOrganization(
+    @TokenUser() user: any,
+    @Args('orgId') orgId: string,
+  ) {
+    return this.callUserAgents(UserAgents.DeleteOrganizationCommand, { orgId }, user);
   }
 
   // ---- Access snapshot (permissions + entitlements) -----------------------
@@ -168,6 +177,49 @@ export class GroupsResolver {
     return this.call(Chat.MarkMessagesReadCommand, data, user);
   }
 
+  /** The participant subset of a sub-chat (resolved userIds → user summaries). */
+  @Query(() => GraphQLJSON, { nullable: true })
+  async subChatParticipants(
+    @TokenUser() user: any,
+    @Args('chatId') chatId: string,
+  ) {
+    return this.call(Chat.ListSubChatParticipantsQuery, { chatId }, user);
+  }
+
+  @Mutation(() => GraphQLJSONObject, { nullable: true })
+  async addSubChatParticipant(
+    @TokenUser() user: any,
+    @Args({ name: 'data', type: () => GraphQLJSONObject }) data: any,
+  ) {
+    return this.call(Chat.AddSubChatParticipantCommand, data, user);
+  }
+
+  @Mutation(() => GraphQLJSONObject, { nullable: true })
+  async removeSubChatParticipant(
+    @TokenUser() user: any,
+    @Args({ name: 'data', type: () => GraphQLJSONObject }) data: any,
+  ) {
+    return this.call(Chat.RemoveSubChatParticipantCommand, data, user);
+  }
+
+  /** Update a sub-chat's editable metadata (title / tags / message type). */
+  @Mutation(() => GraphQLJSONObject, { nullable: true })
+  async updateSubChat(
+    @TokenUser() user: any,
+    @Args({ name: 'data', type: () => GraphQLJSONObject }) data: any,
+  ) {
+    return this.call(Chat.UpdateSubChatCommand, data, user);
+  }
+
+  /** Promote a sub-chat into its own (nested) group workspace so multiple people can record into it. */
+  @Mutation(() => GraphQLJSONObject, { nullable: true })
+  async promoteSubChat(
+    @TokenUser() user: any,
+    @Args({ name: 'data', type: () => GraphQLJSONObject }) data: any,
+  ) {
+    return this.call(Chat.PromoteSubChatCommand, data, user);
+  }
+
   // ---- Group membership ---------------------------------------------------
 
   @Query(() => GraphQLJSON, { nullable: true })
@@ -242,8 +294,57 @@ export class GroupsResolver {
     return this.call(Records.ListPendingApprovalsQuery, { workspaceId }, user);
   }
 
+  /** Approve a pending entry. `note` is an OPTIONAL free remark from the approver. Manager/owner only. */
   @Mutation(() => GraphQLJSONObject, { nullable: true })
-  async approveRecord(@TokenUser() user: any, @Args('recordId') recordId: string) {
-    return this.call(Records.ApproveRecordCommand, { recordId }, user);
+  async approveRecord(
+    @TokenUser() user: any,
+    @Args('recordId') recordId: string,
+    @Args('note', { nullable: true }) note?: string,
+  ) {
+    return this.call(Records.ApproveRecordCommand, { recordId, note }, user);
+  }
+
+  /** Reject a pending entry with a (required) reason the submitter will see. Manager/owner only. */
+  @Mutation(() => GraphQLJSONObject, { nullable: true })
+  async rejectRecord(
+    @TokenUser() user: any,
+    @Args('recordId') recordId: string,
+    @Args('reason') reason: string,
+  ) {
+    return this.call(Records.RejectRecordCommand, { recordId, reason }, user);
+  }
+
+  /**
+   * Approver inbox by status. With no workspaceId this is the GLOBAL inbox across every workspace the
+   * user can approve in; status is 'pending' | 'active' (approved) | 'rejected'.
+   */
+  @Query(() => GraphQLJSON, { nullable: true })
+  async approvals(
+    @TokenUser() user: any,
+    @Args('workspaceId', { nullable: true }) workspaceId?: string,
+    @Args('status', { nullable: true }) status?: string,
+    @Args('limit', { type: () => Int, nullable: true }) limit?: number,
+  ) {
+    return this.call(
+      Records.ListApprovalsQuery,
+      { workspaceId, status, limit },
+      user,
+    );
+  }
+
+  /** A user's OWN submissions (defaults to pending + rejected); global unless workspaceId is given. */
+  @Query(() => GraphQLJSON, { nullable: true })
+  async mySubmissions(
+    @TokenUser() user: any,
+    @Args('workspaceId', { nullable: true }) workspaceId?: string,
+    @Args('status', { nullable: true }) status?: string,
+  ) {
+    return this.call(Records.MySubmissionsQuery, { workspaceId, status }, user);
+  }
+
+  /** Badge counts: awaiting-my-approval + my-pending/rejected, with a per-workspace breakdown. */
+  @Query(() => GraphQLJSONObject, { nullable: true })
+  async approvalCounts(@TokenUser() user: any) {
+    return this.call(Records.ApprovalCountsQuery, {}, user);
   }
 }

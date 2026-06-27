@@ -1,4 +1,5 @@
 
+import { toGraphQLError } from '../../../common/errors/to-graphql-error';
 import { Resolver, Mutation, Args } from '@nestjs/graphql';
 import { NatsClientService } from 'chatbuk-common/dist/common/rpc-clients/nats/nats-client.module';
 import { RPCServices } from 'chatbuk-common/dist/services/rpc-services';
@@ -6,7 +7,6 @@ import { Users } from 'chatbuk-common/dist/services/users/services';
 import { Int } from '@nestjs/graphql';
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { DeleteDto } from '../../../common/dtos/delete.dto';
-import { GraphQLError } from 'graphql';
 
 import { CreateUserDto } from '../dtos/create-user.dto';
 import { UpdateUserDto } from '../dtos/update-user.dto';
@@ -45,7 +45,7 @@ export class CommandResolver {
     return await this.nats
       .sendSync(RPCServices.Users, Users.AppUserLoginCommand, data)
       .catch(e => {
-        throw new GraphQLError(e.message)
+        throw toGraphQLError(e)
       });
   }
 
@@ -55,7 +55,7 @@ export class CommandResolver {
       .sendSync(RPCServices.Users, Users.CreateAppUserCommand, data)
       .catch(e => {
         console.log(e);
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 
@@ -65,7 +65,7 @@ export class CommandResolver {
     return await this.nats
       .sendSync(RPCServices.Users, Users.UpdateAppUserCommand, data)
       .catch(e => {
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 
@@ -75,7 +75,7 @@ export class CommandResolver {
     return await this.nats
       .sendSync(RPCServices.Users, Users.DeleteAppUserCommand, data)
       .catch(e => {
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 
@@ -86,7 +86,7 @@ export class CommandResolver {
     return await this.nats
       .sendSync(RPCServices.Users, Users.CreateMobileVerificationCommand, data)
       .catch(e => {
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 
@@ -106,7 +106,7 @@ export class CommandResolver {
       )
       .catch(e => {
         console.log(e);
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 
@@ -115,7 +115,7 @@ export class CommandResolver {
     return await this.nats
       .sendSync(RPCServices.Users, Users.LoginExecutiveUserCommand, data)
       .catch(e => {
-        throw new GraphQLError(e.message)
+        throw toGraphQLError(e)
       });
   }
 
@@ -132,7 +132,7 @@ export class CommandResolver {
         { data: data, tokenUser: user },
       )
       .catch(e => {
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 
@@ -149,7 +149,7 @@ export class CommandResolver {
         { data: data, tokenUser: user },
       )
       .catch(e => {
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 
@@ -166,7 +166,7 @@ export class CommandResolver {
         { data: data, tokenUser: user }
       )
       .catch(e => {
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 

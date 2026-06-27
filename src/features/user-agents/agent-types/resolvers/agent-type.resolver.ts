@@ -29,7 +29,9 @@ export class AgentTypeResolver {
     }
 
     @Query(() => [AgentType])
-    async getAgentTypes() {
-        return this.nats.sendSync(RPCServices.UserAgents, UserAgents.GetAgentTypesQuery, {});
+    async getAgentTypes(
+        @Args('includeInactive', { type: () => Boolean, nullable: true }) includeInactive?: boolean,
+    ) {
+        return this.nats.sendSync(RPCServices.UserAgents, UserAgents.GetAgentTypesQuery, { includeInactive: includeInactive === true });
     }
 }

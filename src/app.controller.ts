@@ -3,7 +3,7 @@ import { AppService } from './app.service';
 import { NatsClientService } from 'chatbuk-common/dist/common/rpc-clients/nats/nats-client.module';
 import { RPCServices } from 'chatbuk-common/dist/services/rpc-services';
 import { Auth } from 'chatbuk-common/dist/services/auth/services';
-import { GraphQLError } from 'graphql';
+import { toGraphQLError } from './common/errors/to-graphql-error';
 
 @Controller()
 export class AppController {
@@ -22,8 +22,7 @@ export class AppController {
     return await this.nats
       .sendSync(RPCServices.Auth, Auth.GoogleLoginCommand, data)
       .catch(e => {
-        console.log(e.message)
-        throw new GraphQLError(e.message)
+        throw toGraphQLError(e)
       });
   }
 
@@ -34,7 +33,7 @@ export class AppController {
     return await this.nats
       .sendSync(RPCServices.Auth, Auth.Verify2faLoginCommand, data)
       .catch(e => {
-        throw new GraphQLError(e.message)
+        throw toGraphQLError(e)
       });
   }
 }

@@ -6,10 +6,10 @@ import { NatsClientService } from 'chatbuk-common/dist/common/rpc-clients/nats/n
 import { GqlFieldsMap } from 'chatbuk-common/dist/common/decorators/gql-fields-map.decorator';
 import { GqlProjection } from 'chatbuk-common/dist/common/decorators/gql-projection.decorator';
 import { RPCServices } from 'chatbuk-common/dist/services/rpc-services';
-import { McpApp } from 'chatbuk-common/dist/services/agent-service/entities';
+import { McpApp, Records } from 'chatbuk-common/dist/services/agent-service/entities';
 import { TokenUser } from '../../../common/authentication/decorators/tokenUser.decorator';
 import { GqlAuthGuard } from '../../../common/authentication/guards/gql-auth.guard';
-import { GraphQLError } from 'graphql';
+import { toGraphQLError } from '../../../common/errors/to-graphql-error';
 import { McpApp as McpAppType } from '../types/mcpApp.type';
 import { ChatMessageType } from '../types/chat-message.type';
 import { GetManyChatMessagesQueryDto } from '../dtos/get-many-chat-messages.dto';
@@ -32,6 +32,23 @@ export class QueryResolver {
     }
   }
 
+  // Dynamic Advanced-Config schema for an (appCode, domain). App-agnostic JSON descriptor the
+  // frontend renders into a form; proxied to agent-service over NATS (was a direct REST call).
+  @Query(() => GraphQLJSONObject, { nullable: true })
+  async getAppConfigSchema(
+    @Args({ name: 'appCode', nullable: true, type: () => String }) appCode?: string,
+    @Args({ name: 'domain', nullable: true, type: () => String }) domain?: string,
+  ) {
+    return await this.nats
+      .sendSync(RPCServices.AgentService, Records.GetConfigSchemaQuery, {
+        appCode,
+        domain,
+      })
+      .catch(e => {
+        throw toGraphQLError(e);
+      });
+  }
+
   // -------------------------  McpApp ------------------------------------------ //
 
   @Query(returns => String, { nullable: true })
@@ -48,7 +65,7 @@ export class QueryResolver {
         fieldsMap: fieldsMap,
       })
       .catch(e => {
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 
@@ -65,7 +82,7 @@ export class QueryResolver {
         fieldsMap: fieldsMap,
       })
       .catch(e => {
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 
@@ -89,7 +106,7 @@ export class QueryResolver {
       })
       .catch(e => {
         console.log(e.message)
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 
@@ -106,7 +123,7 @@ export class QueryResolver {
       })
       .catch(e => {
         console.log(e.message)
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
 
     return messages.map((msg: any) => {
@@ -142,7 +159,7 @@ export class QueryResolver {
         tokenUser: user
       })
       .catch(e => {
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
 
     return transactions.map((t: any) => ({
@@ -163,7 +180,7 @@ export class QueryResolver {
         tokenUser: user
       })
       .catch(e => {
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
 
     if (transaction) {

@@ -40,6 +40,21 @@ import { DateTimeScalar } from './common/scalars/datetime.scalar';
       context: ({ req }) => ({ req }),
       playground: true,
       useGlobalPrefix: true,
+      // Emit a stable, sanitised error shape for every GraphQL error: `{ message, path,
+      // extensions: { code, statusCode } }`. This guarantees the frontend always has a code to
+      // key its user-facing copy off, and never leaks internals (stacktrace, originalError).
+      formatError: (formatted, error) => {
+        const orig: any = (error as any)?.originalError ?? {};
+        const ext: any = formatted.extensions ?? {};
+        const code = ext.code ?? 'INTERNAL_SERVER_ERROR';
+        const statusCode =
+          orig.status ?? orig.statusCode ?? ext.statusCode ?? ext.originalError?.statusCode ?? null;
+        return {
+          message: formatted.message,
+          path: formatted.path,
+          extensions: { code, statusCode },
+        };
+      },
     }),
     UsersModule,
     AuthModule,

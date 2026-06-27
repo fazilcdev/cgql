@@ -8,7 +8,7 @@ import { GqlAuthGuard } from '../../../common/authentication/guards/gql-auth.gua
 import { TokenUser } from '../../../common/authentication/decorators/tokenUser.decorator';
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { DeleteDto } from '../../../common/dtos/delete.dto';
-import { GraphQLError } from 'graphql';
+import { toGraphQLError } from '../../../common/errors/to-graphql-error';
 
 import { AccessTokenType } from '../types/accesstoken.type';
 import { CreateAccessTokenDto } from '../dtos/create-accesstoken.dto';
@@ -42,7 +42,7 @@ export class CommandResolver {
     return await this.nats
       .sendSync(RPCServices.Auth, Auth.CreateClientCommand, data)
       .catch(e => {
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 
@@ -52,7 +52,7 @@ export class CommandResolver {
     return await this.nats
       .sendSync(RPCServices.Auth, Auth.UpdateClientCommand, data)
       .catch(e => {
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 
@@ -62,7 +62,7 @@ export class CommandResolver {
     return await this.nats
       .sendSync(RPCServices.Auth, Auth.DeleteClientCommand, data)
       .catch(e => {
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 
@@ -74,7 +74,7 @@ export class CommandResolver {
     return await this.nats
       .sendSync(RPCServices.Auth, Auth.CreateAuthUserCommand, data)
       .catch(e => {
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 
@@ -84,7 +84,7 @@ export class CommandResolver {
       .sendSync(RPCServices.Auth, Auth.AttachRoleCommand, data)
       .catch(e => {
         console.log('.........', e);
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 
@@ -93,7 +93,7 @@ export class CommandResolver {
     return await this.nats
       .sendSync(RPCServices.Auth, Auth.UpdateAuthUserCommand, data)
       .catch(e => {
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 
@@ -102,7 +102,7 @@ export class CommandResolver {
     return await this.nats
       .sendSync(RPCServices.Auth, Auth.DeleteAuthUserCommand, data)
       .catch(e => {
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 
@@ -111,7 +111,7 @@ export class CommandResolver {
     return await this.nats
       .sendSync(RPCServices.Auth, Auth.UpdatePasswordCommand, data)
       .catch(e => {
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 
@@ -120,7 +120,7 @@ export class CommandResolver {
     return await this.nats
       .sendSync(RPCServices.Auth, Auth.ValidateAuthUserCommand, data)
       .catch(e => {
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 
@@ -129,8 +129,7 @@ export class CommandResolver {
     return await this.nats
       .sendSync(RPCServices.Auth, Auth.LoginCommand, data)
       .catch(e => {
-        console.log(e)
-        throw new GraphQLError(e.message)
+        throw toGraphQLError(e)
       });
   }
 
@@ -141,7 +140,7 @@ export class CommandResolver {
     return await this.nats
       .sendSync(RPCServices.Auth, Auth.CreateAccessTokenCommand, data)
       .catch(e => {
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 
@@ -150,7 +149,7 @@ export class CommandResolver {
     return await this.nats
       .sendSync(RPCServices.Auth, Auth.UpdateAccessTokenCommand, data)
       .catch(e => {
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 
@@ -159,7 +158,7 @@ export class CommandResolver {
     return await this.nats
       .sendSync(RPCServices.Auth, Auth.DeleteAccessTokenCommand, data)
       .catch(e => {
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 
@@ -171,7 +170,7 @@ export class CommandResolver {
   async enroll2fa(@TokenUser() user: any) {
     return await this.nats
       .sendSync(RPCServices.Auth, Auth.Enroll2faCommand, { userId: user?.id || user?._id })
-      .catch(e => { throw new GraphQLError(e.message); });
+      .catch(e => { throw toGraphQLError(e); });
   }
 
   // Confirm enrollment with a TOTP code — enables 2FA and returns one-time backup codes.
@@ -180,7 +179,7 @@ export class CommandResolver {
   async verify2faSetup(@Args('code') code: string, @TokenUser() user: any) {
     return await this.nats
       .sendSync(RPCServices.Auth, Auth.Verify2faSetupCommand, { userId: user?.id || user?._id, code })
-      .catch(e => { throw new GraphQLError(e.message); });
+      .catch(e => { throw toGraphQLError(e); });
   }
 
   // Disable 2FA — requires a currently-valid TOTP or backup code.
@@ -189,6 +188,6 @@ export class CommandResolver {
   async disable2fa(@Args('code') code: string, @TokenUser() user: any) {
     return await this.nats
       .sendSync(RPCServices.Auth, Auth.Disable2faCommand, { userId: user?.id || user?._id, code })
-      .catch(e => { throw new GraphQLError(e.message); });
+      .catch(e => { throw toGraphQLError(e); });
   }
 }

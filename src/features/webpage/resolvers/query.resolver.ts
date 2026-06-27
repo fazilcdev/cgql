@@ -6,7 +6,7 @@ import { GqlFieldsMap } from 'chatbuk-common/dist/common/decorators/gql-fields-m
 import { GqlProjection } from 'chatbuk-common/dist/common/decorators/gql-projection.decorator';
 import { RPCServices } from 'chatbuk-common/dist/services/rpc-services';
 import { WebPage } from 'chatbuk-common/dist/services/webpage/services';
-import { GraphQLError } from 'graphql';
+import { toGraphQLError } from '../../../common/errors/to-graphql-error';
 import { ContactPageType } from '../types/contactPage.type';
 import { AppVersionType } from '../types/appVersion.type';
 
@@ -31,7 +31,7 @@ export class QueryResolver {
         fieldsMap: fieldsMap,
       })
       .catch(e => {
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 
@@ -54,7 +54,7 @@ export class QueryResolver {
         fieldsMap: fieldsMap,
       })
       .catch(e => {
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 }

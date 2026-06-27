@@ -1,4 +1,5 @@
 import { Resolver, Args, Query } from '@nestjs/graphql';
+import { toGraphQLError } from '../../../common/errors/to-graphql-error';
 import { Int } from '@nestjs/graphql';
 import { TokenUser } from '../../../common/authentication/decorators/tokenUser.decorator';
 import { GraphQLJSONObject } from 'graphql-type-json';
@@ -7,7 +8,6 @@ import { GqlFieldsMap } from 'chatbuk-common/dist/common/decorators/gql-fields-m
 import { GqlProjection } from 'chatbuk-common/dist/common/decorators/gql-projection.decorator';
 import { RPCServices } from 'chatbuk-common/dist/services/rpc-services';
 import { Users } from 'chatbuk-common/dist/services/users/services';
-import { GraphQLError } from 'graphql';
 import { AppUserType } from '../types/appUser.type';
 import { MobileVerificationType } from '../types/mobileVerification.type';
 
@@ -78,7 +78,7 @@ export class QueryResolver {
       })
       .then(flattenAppUser)
       .catch(e => {
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 
@@ -103,7 +103,7 @@ export class QueryResolver {
       })
       .then(users => Array.isArray(users) ? users.map(flattenAppUser) : users)
       .catch(e => {
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 
@@ -125,7 +125,7 @@ export class QueryResolver {
         date: date
       })
       .catch(e => {
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 }

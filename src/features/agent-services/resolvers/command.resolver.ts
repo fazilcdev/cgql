@@ -7,7 +7,7 @@ import { McpApp } from 'chatbuk-common/dist/services/agent-service/entities';
 import { Int } from '@nestjs/graphql';
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { DeleteDto } from '../../../common/dtos/delete.dto';
-import { GraphQLError } from 'graphql';
+import { toGraphQLError } from '../../../common/errors/to-graphql-error';
 
 import { ACRoles } from '../../../common/access-controll/decorators/ac-roles.decorator';
 import { TokenUser } from '../../../common/authentication/decorators/tokenUser.decorator';
@@ -41,7 +41,7 @@ export class CommandResolver {
       )
       .catch(e => {
         console.log('e', e)
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 
@@ -59,7 +59,7 @@ export class CommandResolver {
         { data: data, tokenUser: user },
       )
       .catch(e => {
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 
@@ -76,7 +76,7 @@ export class CommandResolver {
         { data: data, tokenUser: user },
       )
       .catch(e => {
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 
@@ -101,7 +101,7 @@ export class CommandResolver {
       )
       .catch(e => {
         console.log('e', e)
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 
@@ -118,7 +118,7 @@ export class CommandResolver {
         { data: { id }, tokenUser: user },
       )
       .catch(e => {
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 
@@ -136,7 +136,7 @@ export class CommandResolver {
       )
       .catch(e => {
         console.log('Send chat message error:', e);
-        throw new GraphQLError(e.message || 'Failed to send message');
+        throw toGraphQLError(e);
       });
   }
 }

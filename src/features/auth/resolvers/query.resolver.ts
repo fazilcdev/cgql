@@ -1,4 +1,5 @@
 import { Resolver, Args, Query } from '@nestjs/graphql';
+import { toGraphQLError } from '../../../common/errors/to-graphql-error';
 import { Int } from '@nestjs/graphql';
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { NatsClientService } from 'chatbuk-common/dist/common/rpc-clients/nats/nats-client.module';
@@ -6,7 +7,6 @@ import { GqlFieldsMap } from 'chatbuk-common/dist/common/decorators/gql-fields-m
 import { GqlProjection } from 'chatbuk-common/dist/common/decorators/gql-projection.decorator';
 import { RPCServices } from 'chatbuk-common/dist/services/rpc-services';
 import { Auth } from 'chatbuk-common/dist/services/auth/services';
-import { GraphQLError } from 'graphql';
 
 import { AccessTokenType } from '../types/accesstoken.type';
 
@@ -35,7 +35,7 @@ export class QueryResolver {
         fieldsMap: fieldsMap,
       })
       .catch(e => {
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 
@@ -58,7 +58,7 @@ export class QueryResolver {
         fieldsMap: fieldsMap,
       })
       .catch(e => {
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 
@@ -77,7 +77,7 @@ export class QueryResolver {
         fieldsMap: fieldsMap,
       })
       .catch(e => {
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 
@@ -100,7 +100,7 @@ export class QueryResolver {
         fieldsMap: fieldsMap,
       })
       .catch(e => {
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 
@@ -115,7 +115,7 @@ export class QueryResolver {
         condition: condition,
       })
       .catch(e => {
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 
@@ -134,7 +134,7 @@ export class QueryResolver {
         fieldsMap: fieldsMap,
       })
       .catch(e => {
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 
@@ -157,7 +157,7 @@ export class QueryResolver {
         fieldsMap: fieldsMap,
       })
       .catch(e => {
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 }

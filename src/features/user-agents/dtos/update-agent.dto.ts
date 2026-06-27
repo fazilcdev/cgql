@@ -21,6 +21,11 @@ export class UpdateAgentDto {
     @Field(() => GraphQLJSONObject, { nullable: true })
     additionalInfo?: any;
 
+    /** Optional business context edit. Normalized + written to additionalInfo.businessProfile
+     *  (dotted, so workspaceId and other keys are preserved). */
+    @Field(() => GraphQLJSONObject, { nullable: true })
+    businessProfile?: any;
+
     @Field({ nullable: true })
     interactiveMode?: string;
 

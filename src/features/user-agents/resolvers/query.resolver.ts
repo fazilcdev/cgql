@@ -8,7 +8,7 @@ import { GqlProjection } from 'chatbuk-common/dist/common/decorators/gql-project
 import { RPCServices } from 'chatbuk-common/dist/services/rpc-services';
 import { UserAgents } from 'chatbuk-common/dist/services/user-agents/services';
 import { Chat, Membership } from 'chatbuk-common/dist/services/agent-service/entities';
-import { GraphQLError } from 'graphql';
+import { toGraphQLError } from '../../../common/errors/to-graphql-error';
 import { Agent } from '../types/agent.type';
 import { Organization } from '../types/organization.type';
 import { GqlAuthGuard } from '../../../common/authentication/guards/gql-auth.guard';
@@ -31,7 +31,7 @@ export class QueryResolver {
                 fieldsMap: fieldsMap,
             })
             .catch(e => {
-                throw new GraphQLError(e.message);
+                throw toGraphQLError(e);
             });
     }
 
@@ -48,7 +48,7 @@ export class QueryResolver {
                 fieldsMap: fieldsMap,
             })
             .catch(e => {
-                throw new GraphQLError(e.message);
+                throw toGraphQLError(e);
             });
 
         if (agent) {
@@ -100,7 +100,7 @@ export class QueryResolver {
             })
             .catch(e => {
                 console.log(e.message);
-                throw new GraphQLError(e.message);
+                throw toGraphQLError(e);
             });
 
         const agentsWithDates = agents.map(agent => {
@@ -118,8 +118,11 @@ export class QueryResolver {
                     tokenUser: { id: userId },
                 })
                 .catch(() => []);
+            // Only LEGACY participant-subset sub-chats (type 'sub') ride in nested here. First-class
+            // sub-chats are their own agent (with their own groupWorkspaceId / authUser) and surface
+            // top-level on their own, so they must NOT also be nested under the parent.
             agent.subChats = Array.isArray(tree)
-                ? tree.filter((node: any) => node?.type === 'sub' || Boolean(node?.parentChatId))
+                ? tree.filter((node: any) => node?.type === 'sub')
                 : [];
         }));
 
@@ -135,10 +138,11 @@ export class QueryResolver {
                 userId: userId,
             })
             .catch(e => {
-                throw new GraphQLError(e.message);
+                throw toGraphQLError(e);
             });
 
         return orgs.map(org => {
+            if (!org._id && org.id) org._id = org.id;
             if (org.createdAt) org.createdAt = new Date(org.createdAt);
             if (org.updatedAt) org.updatedAt = new Date(org.updatedAt);
             return org;

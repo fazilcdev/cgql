@@ -6,7 +6,7 @@ import { Subscription } from 'chatbuk-common/dist/services/subscription/services
 import { Int } from '@nestjs/graphql';
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { DeleteDto } from '../../../common/dtos/delete.dto';
-import { GraphQLError } from 'graphql';
+import { toGraphQLError } from '../../../common/errors/to-graphql-error';
 
 import { CreateSubscriptionPlanDto } from '../dtos/create-subscription-plan.dto';
 import { UpdateSubscriptionPlanDto } from '../dtos/update-subscription-plan.dto';
@@ -42,7 +42,7 @@ export class CommandResolver {
       )
       .catch(e => {
         console.log('e', e)
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 
@@ -60,7 +60,7 @@ export class CommandResolver {
         { data: data, tokenUser: user },
       )
       .catch(e => {
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 
@@ -77,7 +77,7 @@ export class CommandResolver {
         { data: data, tokenUser: user },
       )
       .catch(e => {
-        throw new GraphQLError(e.message);
+        throw toGraphQLError(e);
       });
   }
 
