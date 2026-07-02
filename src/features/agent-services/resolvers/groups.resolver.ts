@@ -140,6 +140,31 @@ export class GroupsResolver {
     return this.call(Access.GetUsageReportQuery, data || {}, user);
   }
 
+  /**
+   * Platform-wide usage & behavior summary (admin) — input types, intents, sub-chats, connected
+   * apps, token/cost totals, and per-feature usage vs limits. Powers the dashboard's tier-design view.
+   */
+  @UseGuards(ACRolesGuard)
+  @ACRoles(['Admin', 'Super Admin'])
+  @Query(() => GraphQLJSONObject, { nullable: true })
+  async usageSummary(
+    @TokenUser() user: any,
+    @Args({ name: 'data', nullable: true, type: () => GraphQLJSONObject }) data: any,
+  ) {
+    return this.call(Access.GetUsageSummaryQuery, data || {}, user);
+  }
+
+  /** Per-user usage & spend summary (admin) — token/cost totals, behavior, and entitlement snapshot. */
+  @UseGuards(ACRolesGuard)
+  @ACRoles(['Admin', 'Super Admin'])
+  @Query(() => GraphQLJSONObject, { nullable: true })
+  async userUsageSummary(
+    @TokenUser() user: any,
+    @Args({ name: 'data', type: () => GraphQLJSONObject }) data: any,
+  ) {
+    return this.call(Access.GetUserUsageSummaryQuery, data || {}, user);
+  }
+
   /** Save the enabled subset — admin only. */
   @UseGuards(ACRolesGuard)
   @ACRoles(['Admin', 'Super Admin'])

@@ -13,6 +13,9 @@ export class UpdateAgentDto {
     avatar?: string;
 
     @Field({ nullable: true })
+    avatarColor?: string;
+
+    @Field({ nullable: true })
     description?: string;
 
     @Field({ nullable: true })
